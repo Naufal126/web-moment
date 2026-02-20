@@ -3,24 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Museum Momen Naufal ✨</title>
+    <title>Museum Cloud Naufal ✨</title>
     <style>
-        :root { --primary: #6d5d6e; --bg: #fdfaf6; --white: #ffffff; }
+        :root { --primary: #6d5d6e; --bg: #fdfaf6; --accent: #4a3f4b; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; font-family: 'Segoe UI', sans-serif; background-color: var(--bg); overflow: hidden; }
 
-        /* --- 1. LANDING PAGE --- */
+        /* --- LANDING PAGE --- */
         #landing-page {
             position: fixed; inset: 0; 
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
-            url('https://images.unsplash.com/photo-1493246507139-91e8bef99c02?auto=format&fit=crop&w=1200&q=80');
+            background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), 
+            url('https://images.unsplash.com/photo-1518173946687-a4c8a9ba332f?q=80&w=1200&auto=format&fit=crop');
             background-size: cover; background-position: center;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             z-index: 3000; color: white; text-align: center; transition: 0.8s ease;
         }
-        .btn-enter { padding: 15px 45px; border-radius: 30px; border: none; cursor: pointer; font-weight: bold; background: white; color: #333; font-size: 1rem; margin-top: 20px; transition: 0.3s; }
-        .btn-enter:hover { transform: scale(1.05); background: #eee; }
+        .btn-enter { padding: 16px 50px; border-radius: 40px; border: none; cursor: pointer; font-weight: bold; background: white; color: #333; font-size: 1.1rem; margin-top: 25px; transition: 0.3s; }
 
-        /* --- 2. LOADING SCREEN --- */
+        /* --- LOADING SCREEN --- */
         #loading-screen {
             position: fixed; inset: 0; background-color: var(--bg);
             display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 4000;
@@ -28,26 +27,24 @@
         .spinner { width: 50px; height: 50px; border: 5px solid #ddd; border-top: 5px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* --- 3. MAIN APP --- */
-        #main-app { height: 100vh; overflow-y: auto; display: none; padding-bottom: 100px; }
+        /* --- MAIN APP --- */
+        #main-app { height: 100vh; overflow-y: auto; display: none; padding-bottom: 110px; }
         .container { max-width: 500px; margin: 0 auto; padding: 20px; }
-        .card { background: white; padding: 25px; border-radius: 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .card { background: white; padding: 25px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 25px; }
         
-        select, input, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #eee; border-radius: 12px; box-sizing: border-box; font-family: inherit; }
-        .btn-action { background: var(--primary); color: white; border: none; width: 100%; padding: 15px; border-radius: 15px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn-action:disabled { background: #ccc; cursor: not-allowed; }
+        select, input, textarea { width: 100%; padding: 14px; margin: 10px 0; border: 1px solid #eee; border-radius: 15px; box-sizing: border-box; font-family: inherit; }
+        .btn-action { background: var(--primary); color: white; border: none; width: 100%; padding: 16px; border-radius: 18px; font-weight: bold; cursor: pointer; }
+        .btn-action:disabled { background: #bbb; cursor: not-allowed; }
 
-        /* Status Upload */
-        #upload-status { display: none; text-align: center; font-size: 0.85rem; color: var(--primary); font-weight: bold; margin-top: 10px; }
+        #upload-status { display: none; text-align: center; font-size: 0.9rem; color: var(--primary); font-weight: bold; margin-top: 15px; padding: 10px; background: #f0ebf0; border-radius: 10px; }
 
         /* --- GALLERY --- */
-        .moment-card { background: white; border-radius: 20px; overflow: hidden; margin-bottom: 25px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-        .moment-card img, .moment-card video { width: 100%; height: auto; max-height: 400px; object-fit: cover; background: #000; }
+        .moment-card { background: white; border-radius: 25px; overflow: hidden; margin-bottom: 30px; box-shadow: 0 12px 25px rgba(0,0,0,0.06); }
+        .moment-card img, .moment-card video { width: 100%; height: auto; max-height: 450px; object-fit: cover; background: #000; }
         .moment-body { padding: 20px; }
 
-        /* --- NAVIGATION --- */
-        nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #eee; z-index: 500; }
-        .nav-item { cursor: pointer; text-align: center; color: #999; font-size: 0.8rem; flex: 1; }
+        nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; justify-content: space-around; padding: 18px 0; border-top: 1px solid #eee; z-index: 1000; }
+        .nav-item { cursor: pointer; text-align: center; color: #bbb; font-size: 0.8rem; flex: 1; }
         .nav-item.active { color: var(--primary); font-weight: bold; }
         .hidden { display: none; }
     </style>
@@ -55,33 +52,30 @@
 <body>
 
     <div id="landing-page">
-        <h1>Museum Momen Cloud ✨</h1>
-        <p>Setiap detik punya cerita sendiri.</p>
-        <button class="btn-enter" onclick="startLoading()">Masuk Jurnal</button>
+        <h1>Museum Momen ✨</h1>
+        <p>Setiap kenangan tersimpan di cloud.</p>
+        <button class="btn-enter" onclick="startLoading()">Buka Jurnal</button>
     </div>
 
     <div id="loading-screen">
         <div class="spinner"></div>
-        <p style="margin-top: 20px; color: var(--primary); font-weight: 500;" id="loading-msg">Menghubungkan ke Cloud...</p>
+        <p style="margin-top: 20px; color: var(--primary);">MENGHUBUNGKAN...</p>
     </div>
 
     <div id="main-app">
         <div class="container">
             <div id="view-add">
-                <h2 style="text-align: center;">Abadikan Momen</h2>
+                <h2 style="text-align: center;">Tambah Kenangan</h2>
                 <div class="card">
-                    <label style="font-size: 0.8rem; color: #888;">Tipe Media:</label>
                     <select id="inp-type">
                         <option value="image">Foto 📸</option>
                         <option value="video">Video 📽️</option>
                     </select>
-                    
                     <input type="file" id="inp-file" accept="image/*,video/*">
                     <input type="text" id="inp-title" placeholder="Judul momen...">
-                    <textarea id="inp-desc" rows="3" placeholder="Ceritakan detailnya..."></textarea>
-                    
-                    <button id="btn-save" class="btn-action" onclick="handleUpload()">Upload & Simpan ke GitHub</button>
-                    <div id="upload-status">🚀 Sedang mengirim ke GitHub... mohon tunggu.</div>
+                    <textarea id="inp-desc" rows="3" placeholder="Ceritakan momen ini..."></textarea>
+                    <button id="btn-save" class="btn-action" onclick="handleUpload()">Upload ke GitHub</button>
+                    <div id="upload-status">🚀 Sedang mengirim ke GitHub...</div>
                 </div>
             </div>
 
@@ -91,20 +85,20 @@
             </div>
         </div>
 
-        <nav id="navbar">
-            <div class="nav-item active" id="nav-add" onclick="pindahTab('add')">➕<br>Input</div>
-            <div class="nav-item" id="nav-gallery" onclick="pindahTab('gallery')">🖼️<br>Galeri</div>
+        <nav>
+            <div class="nav-item active" id="nav-add" onclick="pindahTab('add')">➕<br>TAMBAH</div>
+            <div class="nav-item" id="nav-gallery" onclick="pindahTab('gallery')">🖼️<br>GALERI</div>
         </nav>
     </div>
 
     <script>
-        // === KONFIGURASI OTOMATIS GITHUB ===
+        // === KONFIGURASI GITHUB NAUFAL ===
         const CONFIG = {
-            token: "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",
+            token: "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", 
             owner: "Naufal126",
             repo: "web-moment",
             branch: "main",
-            folder: "moments" // Folder tujuan di GitHub
+            folder: "moments.." 
         };
 
         function startLoading() {
@@ -112,13 +106,11 @@
             setTimeout(() => {
                 document.getElementById('landing-page').style.display = 'none';
                 document.getElementById('loading-screen').style.display = 'flex';
-                
                 setTimeout(() => {
                     document.getElementById('loading-screen').style.display = 'none';
                     document.getElementById('main-app').style.display = 'block';
-                    document.body.style.overflow = 'auto';
                     render();
-                }, 2500); 
+                }, 2000); 
             }, 800);
         }
 
@@ -130,10 +122,10 @@
             const status = document.getElementById('upload-status');
             const btn = document.getElementById('btn-save');
 
-            if (!fileInput.files[0] || !titleInput.value) return alert("Pilih file dan isi judul!");
+            if (!fileInput.files[0] || !titleInput.value) return alert("Isi data dulu!");
 
             const file = fileInput.files[0];
-            const fileName = `${Date.now()}_${file.name.replace(/\s/g, '_')}`;
+            const fileName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
             const filePath = `${CONFIG.folder}/${fileName}`;
 
             btn.disabled = true;
@@ -143,9 +135,7 @@
             reader.readAsDataURL(file);
             reader.onload = async () => {
                 const base64Content = reader.result.split(',')[1];
-
                 try {
-                    // Proses Upload ke API GitHub
                     const response = await fetch(`https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${filePath}`, {
                         method: "PUT",
                         headers: {
@@ -153,14 +143,13 @@
                             "Content-Type": "application/json"
                         },
                         body: JSON.stringify({
-                            message: `Momen Baru: ${titleInput.value}`,
+                            message: `Upload: ${titleInput.value}`,
                             content: base64Content,
                             branch: CONFIG.branch
                         })
                     });
 
                     if (response.ok) {
-                        // Simpan metadata ke LocalStorage agar Galeri terupdate
                         const momentData = {
                             id: Date.now(),
                             type: typeInput.value,
@@ -169,24 +158,18 @@
                             desc: descInput.value,
                             date: new Date().toLocaleDateString('id-ID')
                         };
-
                         let list = JSON.parse(localStorage.getItem('naufal_moments')) || [];
                         list.unshift(momentData);
                         localStorage.setItem('naufal_moments', JSON.stringify(list));
-
-                        alert("Berhasil! File terunggah otomatis ke GitHub.");
-                        
-                        // Reset Form
-                        fileInput.value = "";
-                        titleInput.value = "";
-                        descInput.value = "";
+                        alert("Berhasil disimpan!");
+                        fileInput.value = ""; titleInput.value = ""; descInput.value = "";
                         pindahTab('gallery');
                     } else {
-                        const errorData = await response.json();
-                        throw new Error(errorData.message || "Gagal upload");
+                        const err = await response.json();
+                        throw new Error(err.message);
                     }
-                } catch (err) {
-                    alert("Error: " + err.message);
+                } catch (e) {
+                    alert("Gagal: " + e.message);
                 } finally {
                     btn.disabled = false;
                     status.style.display = 'none';
@@ -205,29 +188,23 @@
         function render() {
             const container = document.getElementById('gallery-list');
             const data = JSON.parse(localStorage.getItem('naufal_moments')) || [];
-            
-            if(data.length === 0) {
-                container.innerHTML = "<p style='text-align:center; color:#999; margin-top:50px;'>Belum ada kenangan. Mulai upload momen pertamamu!</p>";
-                return;
-            }
-
-            container.innerHTML = data.map(m => `
-                <div class="moment-card">
-                    ${m.type === 'video' ? 
-                        `<video controls src="${m.path}"></video>` : 
-                        `<img src="${m.path}" onerror="this.src='https://via.placeholder.com/500x300?text=Memuat+dari+GitHub...'">`}
-                    <div class="moment-body">
-                        <small style="color:#aaa;">${m.date} | ${m.type.toUpperCase()}</small>
-                        <h3 style="margin:5px 0;">${m.title}</h3>
-                        <p style="color:#666; font-size:0.9rem; line-height:1.4;">${m.desc}</p>
-                        <button onclick="hapusMomen(${m.id})" style="color:red; background:none; border:none; cursor:pointer; padding:0; margin-top:10px;">🗑️ Hapus Catatan</button>
-                    </div>
-                </div>
-            `).join('');
+            container.innerHTML = data.length === 0 ? "<p style='text-align:center;margin-top:50px;color:#999;'>Belum ada momen.</p>" : "";
+            data.forEach(m => {
+                container.innerHTML += `
+                    <div class="moment-card">
+                        ${m.type === 'video' ? `<video controls src="${m.path}"></video>` : `<img src="${m.path}" onerror="this.src='https://via.placeholder.com/500x300?text=Memproses...'">`}
+                        <div class="moment-body">
+                            <small>${m.date}</small>
+                            <h3>${m.title}</h3>
+                            <p>${m.desc}</p>
+                            <button onclick="hapusCatatan(${m.id})" style="color:red; background:none; border:none; cursor:pointer;">Hapus</button>
+                        </div>
+                    </div>`;
+            });
         }
 
-        function hapusMomen(id) {
-            if(confirm("Hapus catatan ini? (File asli di GitHub tidak akan terhapus)")) {
+        function hapusCatatan(id) {
+            if(confirm("Hapus catatan?")) {
                 let list = JSON.parse(localStorage.getItem('naufal_moments')).filter(m => m.id !== id);
                 localStorage.setItem('naufal_moments', JSON.stringify(list));
                 render();
