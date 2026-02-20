@@ -3,258 +3,204 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Museum Cloud Naufal ✨</title>
+    <title>Jurnal Momenku ✨</title>
     <style>
-        :root { --primary: #6d5d6e; --bg: #fdfaf6; --accent: #4a3f4b; }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; font-family: 'Segoe UI', sans-serif; background-color: var(--bg); overflow: hidden; }
+        :root {
+            --primary: #6d5d6e;
+            --bg: #fdfaf6;
+            --white: #ffffff;
+        }
 
-        /* --- LANDING PAGE --- */
+        body, html {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg);
+            overflow: hidden;
+        }
+
+        /* --- 1. HALAMAN LANDING --- */
         #landing-page {
-            position: fixed; inset: 0; 
-            background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), 
-            url('https://images.unsplash.com/photo-1518173946687-a4c8a9ba332f?q=80&w=1200&auto=format&fit=crop');
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                        url('https://images.unsplash.com/photo-1516483642775-6a2822c9430c?auto=format&fit=crop&w=1200&q=80');
             background-size: cover; background-position: center;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 3000; color: white; text-align: center; transition: 0.8s ease;
-        }
-        .btn-enter { padding: 16px 50px; border-radius: 40px; border: none; cursor: pointer; font-weight: bold; background: white; color: #333; font-size: 1.1rem; margin-top: 25px; transition: 0.3s; }
-
-        /* --- LOGIN TOKEN (KEAMANAN) --- */
-        #token-screen {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.9);
-            display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 5000; color: white; padding: 20px;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            color: white; text-align: center;
+            transition: opacity 0.8s ease;
         }
 
-        /* --- LOADING SCREEN --- */
+        /* --- 2. LOADING SCREEN --- */
         #loading-screen {
-            position: fixed; inset: 0; background-color: var(--bg);
-            display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 4000;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--bg);
+            display: none; /* Sembunyi secara default */
+            flex-direction: column;
+            justify-content: center; align-items: center;
+            z-index: 2000;
         }
-        .spinner { width: 50px; height: 50px; border: 5px solid #ddd; border-top: 5px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* --- MAIN APP --- */
-        #main-app { height: 100vh; overflow-y: auto; display: none; padding-bottom: 110px; }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #ddd;
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* --- 3. APLIKASI UTAMA --- */
+        #main-app {
+            height: 100vh;
+            overflow-y: auto;
+            display: none;
+            padding-bottom: 100px;
+        }
+
         .container { max-width: 500px; margin: 0 auto; padding: 20px; }
-        .card { background: white; padding: 25px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 25px; }
-        
-        select, input, textarea { width: 100%; padding: 14px; margin: 10px 0; border: 1px solid #eee; border-radius: 15px; box-sizing: border-box; font-family: inherit; }
-        .btn-action { background: var(--primary); color: white; border: none; width: 100%; padding: 16px; border-radius: 18px; font-weight: bold; cursor: pointer; }
 
-        #upload-status { display: none; text-align: center; font-size: 0.9rem; color: var(--primary); font-weight: bold; margin-top: 15px; padding: 10px; background: #f0ebf0; border-radius: 10px; }
+        /* Gaya Form & Galeri */
+        .card { background: white; padding: 25px; border-radius: 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        input, textarea { width: 100%; padding: 15px; margin: 10px 0; border: 1px solid #eee; border-radius: 15px; box-sizing: border-box; }
+        .btn-action { background: var(--primary); color: white; border: none; width: 100%; padding: 15px; border-radius: 15px; font-weight: bold; cursor: pointer; }
 
-        /* --- GALLERY --- */
-        .moment-card { background: white; border-radius: 25px; overflow: hidden; margin-bottom: 30px; box-shadow: 0 12px 25px rgba(0,0,0,0.06); }
-        .moment-card img, .moment-card video { width: 100%; height: auto; max-height: 450px; object-fit: cover; background: #000; }
+        .moment-card { background: white; border-radius: 20px; overflow: hidden; margin-bottom: 25px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .moment-card img { width: 100%; height: 350px; object-fit: cover; }
         .moment-body { padding: 20px; }
 
-        nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; justify-content: space-around; padding: 18px 0; border-top: 1px solid #eee; z-index: 1000; }
-        .nav-item { cursor: pointer; text-align: center; color: #bbb; font-size: 0.8rem; flex: 1; }
+        /* Navigasi */
+        nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #eee; }
+        .nav-item { cursor: pointer; text-align: center; color: #999; font-size: 0.8rem; flex: 1; }
         .nav-item.active { color: var(--primary); font-weight: bold; }
+
         .hidden { display: none; }
     </style>
 </head>
 <body>
 
     <div id="landing-page">
-        <h1>Museum Momen ✨</h1>
-        <p>Aman, Pribadi, dan Tersimpan di Cloud.</p>
-        <button class="btn-enter" onclick="checkToken()">Buka Jurnal</button>
-    </div>
-
-    <div id="token-screen">
-        <h3>🔒 Keamanan Cloud</h3>
-        <p style="text-align:center; font-size: 0.9rem; opacity: 0.8;">Masukkan GitHub Token kamu untuk mengakses penyimpanan.</p>
-        <input type="password" id="sys-token" placeholder="ghp_xxxxxxxxxxxx" style="width: 80%; max-width: 300px;">
-        <button class="btn-action" onclick="saveToken()" style="width: 80%; max-width: 300px; margin-top: 10px;">Simpan & Masuk</button>
-        <p style="font-size: 0.7rem; margin-top: 20px; color: #aaa;">Token disimpan aman di browser anda.</p>
+        <h1>Museum Kenangan ✨</h1>
+        <p>Setiap detik punya cerita sendiri.</p>
+        <button onclick="startLoading()" style="padding: 15px 40px; border-radius: 30px; border: none; font-weight: bold; cursor: pointer; font-size: 1rem;">Mulai Sekarang</button>
     </div>
 
     <div id="loading-screen">
         <div class="spinner"></div>
-        <p style="margin-top: 20px; color: var(--primary);">MENGHUBUNGKAN...</p>
+        <p style="margin-top: 20px; color: var(--primary); font-weight: 500;">Membuka kenangan...</p>
     </div>
 
     <div id="main-app">
         <div class="container">
             <div id="view-add">
-                <h2 style="text-align: center;">Tambah Kenangan</h2>
+                <h2 style="text-align: center;">Abadikan Momen</h2>
                 <div class="card">
-                    <select id="inp-type">
-                        <option value="image">Foto 📸</option>
-                        <option value="video">Video 📽️</option>
-                    </select>
-                    <input type="file" id="inp-file" accept="image/*,video/*">
+                    <input type="file" id="inp-file" accept="image/*">
                     <input type="text" id="inp-title" placeholder="Judul momen...">
-                    <textarea id="inp-desc" rows="3" placeholder="Ceritakan momen ini..."></textarea>
-                    <button id="btn-save" class="btn-action" onclick="handleUpload()">Upload ke GitHub</button>
-                    <div id="upload-status">🚀 Sedang mengirim ke GitHub...</div>
-                    <button onclick="logoutToken()" style="background:none; border:none; color:#ccc; font-size:0.7rem; width:100%; margin-top:20px; cursor:pointer;">Reset Token Keamanan</button>
+                    <textarea id="inp-desc" rows="4" placeholder="Ceritakan detailnya..."></textarea>
+                    <button class="btn-action" onclick="simpan()">Simpan Kenangan</button>
                 </div>
             </div>
 
             <div id="view-gallery" class="hidden">
-                <h2 style="text-align: center;">Galeri Kenangan</h2>
+                <h2 style="text-align: center;">Galeri Kamu</h2>
                 <div id="gallery-list"></div>
             </div>
         </div>
 
-        <nav>
-            <div class="nav-item active" id="nav-add" onclick="pindahTab('add')">➕<br>TAMBAH</div>
-            <div class="nav-item" id="nav-gallery" onclick="pindahTab('gallery')">🖼️<br>GALERI</div>
+        <nav id="navbar" class="hidden">
+            <div class="nav-item active" id="nav-add" onclick="pindahTab('add')">📸<br>Input</div>
+            <div class="nav-item" id="nav-gallery" onclick="pindahTab('gallery')">🖼️<br>Galeri</div>
         </nav>
     </div>
 
     <script>
-        // === KONFIGURASI DASAR ===
-        const CONFIG = {
-            owner: "Naufal126",
-            repo: "web-moment",
-            branch: "main",
-            folder: "moments.." 
-        };
-
-        // Fungsi Cek Token
-        function checkToken() {
-            const savedToken = localStorage.getItem('gh_token');
-            if (!savedToken) {
-                document.getElementById('landing-page').style.display = 'none';
-                document.getElementById('token-screen').style.display = 'flex';
-            } else {
-                startLoading();
-            }
-        }
-
-        function saveToken() {
-            const tk = document.getElementById('sys-token').value;
-            if (tk.startsWith('ghp_')) {
-                localStorage.setItem('gh_token', tk);
-                document.getElementById('token-screen').style.display = 'none';
-                startLoading();
-            } else {
-                alert("Token tidak valid! Harus diawali dengan 'ghp_'");
-            }
-        }
-
-        function logoutToken() {
-            if(confirm("Logout dan hapus token dari browser?")) {
-                localStorage.removeItem('gh_token');
-                location.reload();
-            }
-        }
-
         function startLoading() {
+            // Sembunyikan Landing Page
             document.getElementById('landing-page').style.opacity = '0';
+            
             setTimeout(() => {
                 document.getElementById('landing-page').style.display = 'none';
+                // Tampilkan Loading Screen
                 document.getElementById('loading-screen').style.display = 'flex';
+                
+                // Setelah 3 detik, masuk ke aplikasi utama
                 setTimeout(() => {
                     document.getElementById('loading-screen').style.display = 'none';
                     document.getElementById('main-app').style.display = 'block';
-                    render();
-                }, 1500); 
-            }, 500);
-        }
+                    document.getElementById('navbar').classList.remove('hidden');
+                    document.body.style.overflow = 'auto';
+                }, 3000); // <-- Durasi Loading (3000ms = 3 detik)
 
-        async function handleUpload() {
-            const token = localStorage.getItem('gh_token');
-            const fileInput = document.getElementById('inp-file');
-            const titleInput = document.getElementById('inp-title');
-            const descInput = document.getElementById('inp-desc');
-            const typeInput = document.getElementById('inp-type');
-            const status = document.getElementById('upload-status');
-            const btn = document.getElementById('btn-save');
-
-            if (!fileInput.files[0] || !titleInput.value) return alert("Isi data dulu!");
-
-            const file = fileInput.files[0];
-            const fileName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
-            const filePath = `${CONFIG.folder}/${fileName}`;
-
-            btn.disabled = true;
-            status.style.display = 'block';
-
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = async () => {
-                const base64Content = reader.result.split(',')[1];
-                try {
-                    const response = await fetch(`https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${filePath}`, {
-                        method: "PUT",
-                        headers: {
-                            "Authorization": `token ${token}`,
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({
-                            message: `Upload: ${titleInput.value}`,
-                            content: base64Content,
-                            branch: CONFIG.branch
-                        })
-                    });
-
-                    if (response.ok) {
-                        const momentData = {
-                            id: Date.now(),
-                            type: typeInput.value,
-                            path: `https://${CONFIG.owner}.github.io/${CONFIG.repo}/${filePath}`,
-                            title: titleInput.value,
-                            desc: descInput.value,
-                            date: new Date().toLocaleDateString('id-ID')
-                        };
-                        let list = JSON.parse(localStorage.getItem('naufal_moments')) || [];
-                        list.unshift(momentData);
-                        localStorage.setItem('naufal_moments', JSON.stringify(list));
-                        alert("Berhasil disimpan!");
-                        fileInput.value = ""; titleInput.value = ""; descInput.value = "";
-                        pindahTab('gallery');
-                    } else {
-                        const err = await response.json();
-                        if (response.status === 401) {
-                            localStorage.removeItem('gh_token');
-                            alert("Token salah atau kadaluwarsa! Silakan masukkan ulang.");
-                            location.reload();
-                        }
-                        throw new Error(err.message);
-                    }
-                } catch (e) {
-                    alert("Gagal: " + e.message);
-                } finally {
-                    btn.disabled = false;
-                    status.style.display = 'none';
-                }
-            };
+            }, 800);
         }
 
         function pindahTab(tab) {
-            document.getElementById('view-add').classList.toggle('hidden', tab !== 'add');
-            document.getElementById('view-gallery').classList.toggle('hidden', tab !== 'gallery');
-            document.getElementById('nav-add').classList.toggle('active', tab === 'add');
-            document.getElementById('nav-gallery').classList.toggle('active', tab === 'gallery');
+            document.getElementById('view-add').classList.add('hidden');
+            document.getElementById('view-gallery').classList.add('hidden');
+            document.getElementById('nav-add').classList.remove('active');
+            document.getElementById('nav-gallery').classList.remove('active');
+
+            document.getElementById('view-' + tab).classList.remove('hidden');
+            document.getElementById('nav-' + tab).classList.add('active');
             if(tab === 'gallery') render();
+        }
+
+        function simpan() {
+            const file = document.getElementById('inp-file').files[0];
+            const title = document.getElementById('inp-title').value;
+            const desc = document.getElementById('inp-desc').value;
+
+            if(!file || !title) return alert("Pilih foto & isi judul!");
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = { id: Date.now(), img: e.target.result, title, desc, date: new Date().toLocaleDateString('id-ID') };
+                let list = JSON.parse(localStorage.getItem('momen_v4')) || [];
+                list.unshift(data);
+                localStorage.setItem('momen_v4', JSON.stringify(list));
+                
+                document.getElementById('inp-file').value = '';
+                document.getElementById('inp-title').value = '';
+                document.getElementById('inp-desc').value = '';
+                alert("Berhasil disimpan!");
+                pindahTab('gallery');
+            };
+            reader.readAsDataURL(file);
         }
 
         function render() {
             const container = document.getElementById('gallery-list');
-            const data = JSON.parse(localStorage.getItem('naufal_moments')) || [];
-            container.innerHTML = data.length === 0 ? "<p style='text-align:center;margin-top:50px;color:#999;'>Belum ada momen.</p>" : "";
-            data.forEach(m => {
-                container.innerHTML += `
-                    <div class="moment-card">
-                        ${m.type === 'video' ? `<video controls src="${m.path}"></video>` : `<img src="${m.path}" onerror="this.src='https://via.placeholder.com/500x300?text=Memproses+Cloud...'">`}
-                        <div class="moment-body">
-                            <small>${m.date}</small>
-                            <h3>${m.title}</h3>
-                            <p>${m.desc}</p>
-                            <button onclick="hapusCatatan(${m.id})" style="color:red; background:none; border:none; cursor:pointer;">Hapus</button>
-                        </div>
-                    </div>`;
-            });
+            const data = JSON.parse(localStorage.getItem('momen_v4')) || [];
+            if(data.length === 0) {
+                container.innerHTML = "<p style='text-align:center; color:#999; margin-top:50px;'>Belum ada foto.</p>";
+                return;
+            }
+            container.innerHTML = data.map(m => `
+                <div class="moment-card">
+                    <img src="${m.img}">
+                    <div class="moment-body">
+                        <small style="color:#bbb">${m.date}</small>
+                        <h3 style="margin:5px 0">${m.title}</h3>
+                        <p style="color:#666; font-size:0.9rem">${m.desc}</p>
+                        <button onclick="hapus(${m.id})" style="color:red; background:none; border:none; cursor:pointer;">Hapus</button>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        function hapusCatatan(id) {
-            if(confirm("Hapus catatan?")) {
-                let list = JSON.parse(localStorage.getItem('naufal_moments')).filter(m => m.id !== id);
-                localStorage.setItem('naufal_moments', JSON.stringify(list));
+        function hapus(id) {
+            if(confirm("Hapus?")) {
+                let list = JSON.parse(localStorage.getItem('momen_v4')).filter(m => m.id !== id);
+                localStorage.setItem('momen_v4', JSON.stringify(list));
                 render();
             }
         }
