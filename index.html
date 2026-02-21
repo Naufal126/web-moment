@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Penyimpanan kenangan✨</title>
+    <title>Penyimpanan Kenangan</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --primary: #6d5d6e; --bg: #fdfaf6; --accent: #4a3f4b; }
@@ -16,8 +16,7 @@
             width: 40px; height: 40px; border-radius: 12px;
             display: none; align-items: center; justify-content: center;
             color: var(--primary); border: 1px solid rgba(109, 93, 110, 0.1);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            z-index: 5000; cursor: pointer; transition: 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); z-index: 5000; cursor: pointer;
         }
 
         /* --- WIDGET HEADER (POJOK KANAN) --- */
@@ -30,8 +29,7 @@
             background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);
             padding: 6px 12px; border-radius: 15px; font-weight: bold;
             font-size: 0.75rem; color: var(--primary); border: 1px solid rgba(109, 93, 110, 0.1);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            display: flex; align-items: center; gap: 5px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 5px;
         }
 
         /* --- LANDING PAGE --- */
@@ -48,7 +46,7 @@
         .container { max-width: 500px; margin: 0 auto; padding: 20px; }
         .card { background: white; padding: 25px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 25px; }
         input, textarea { width: 100%; padding: 14px; margin: 10px 0; border: 1px solid #eee; border-radius: 15px; box-sizing: border-box; font-family: inherit; outline: none; }
-        .btn-action { background: var(--primary); color: white; border: none; width: 100%; padding: 16px; border-radius: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-action { background: var(--primary); color: white; border: none; width: 100%; padding: 16px; border-radius: 18px; font-weight: bold; cursor: pointer; }
 
         /* --- LOADING BAR --- */
         #upload-container { display: none; margin-top: 20px; text-align: center; }
@@ -64,17 +62,19 @@
         .warning-bg .btn-modal { background: linear-gradient(45deg, #FF9800, #FFC107); animation: pulse-orange 2s infinite; }
         @keyframes pulse-green { 0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); } 70% { box-shadow: 0 0 0 12px rgba(76, 175, 80, 0); } 100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); } }
 
-        /* --- NAV BAR --- */
+        /* --- NAV BAR MULTI-BARIS --- */
         nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; flex-direction: column; padding: 10px 0; border-top: 1px solid #eee; z-index: 1000; }
         .nav-buttons { display: flex; width: 100%; }
         .nav-item { flex: 1; text-align: center; color: #bbb; cursor: pointer; font-size: 0.8rem; font-weight: bold; padding: 5px 0; }
         .nav-item.active { color: var(--primary); }
+        
         .nav-footer { display: flex; align-items: center; justify-content: space-between; padding: 10px 20px 5px 20px; margin-top: 8px; border-top: 1px solid #f5f5f5; }
         .nav-footer a { text-decoration: none; display: flex; align-items: center; gap: 6px; font-size: 0.75rem; font-weight: bold; color: #333; }
         .nav-footer span { color: #ccc; font-size: 0.65rem; font-weight: bold; letter-spacing: 1.5px; flex: 1; text-align: center; }
-        .fa-instagram { color: #E1306C; }
-        .fa-tiktok { color: #000; }
+        .fa-instagram { color: #E1306C; font-size: 1rem; }
+        .fa-tiktok { color: #000; font-size: 1rem; }
 
+        /* --- GALLERY --- */
         .moment-card { background: white; border-radius: 20px; overflow: hidden; margin-bottom: 25px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
         .moment-card img, .moment-card video { width: 100%; display: block; background: #000; }
         .moment-body { padding: 15px; }
@@ -94,15 +94,25 @@
     </div>
 
     <div id="modal-success" class="modal-overlay success-bg">
-        <div class="modal-content"><h3>✨ Berhasil!</h3><button class="btn-modal" onclick="closeModal('modal-success')">OKE SIAP!</button></div>
+        <div class="modal-content">
+            <div style="font-size: 50px;">✨</div>
+            <h3>Berhasil Disimpan!</h3>
+            <button class="btn-modal" onclick="closeModal('modal-success')">OKE SIAP! </button>
+        </div>
     </div>
+
     <div id="modal-warning" class="modal-overlay warning-bg">
-        <div class="modal-content"><h3>⚠️ Ops!</h3><p id="warning-text"></p><button class="btn-modal" onclick="closeModal('modal-warning')">MENGERTI</button></div>
+        <div class="modal-content">
+            <div style="font-size: 50px;">⚠️</div>
+            <h3>Belum Lengkap!</h3>
+            <p id="warning-text" style="color:#666; font-size: 0.85rem;"></p>
+            <button class="btn-modal" onclick="closeModal('modal-warning')">MENGERTI</button>
+        </div>
     </div>
 
     <div id="landing">
-        <h1 style="letter-spacing: 2px;">Penyimpanan kenangan by Naufal✨</h1>
-        <button class="btn-enter" onclick="startApp()">Masuk</button>
+        <h1 style="letter-spacing: 2px;">Penyimpanan Kenangan By Naufal ✨</h1>
+        <button class="btn-enter" onclick="startApp()">Masuk Galeri</button>
     </div>
 
     <div id="app">
@@ -112,17 +122,17 @@
                 <div class="card">
                     <input type="file" id="inp-file" accept="image/*,video/*">
                     <input type="text" id="inp-title" placeholder="Judul momen...">
-                    <textarea id="inp-desc" rows="3" placeholder="Cerita momen..."></textarea>
-                    <button id="btn-save" class="btn-action" onclick="uploadToCloudinary()">Upload Sekarang</button>
+                    <textarea id="inp-desc" rows="3" placeholder="Cerita momen ini..."></textarea>
+                    <button id="btn-save" class="btn-action" onclick="uploadToCloudinary()">Upload Kenangan</button>
                     <div id="upload-container">
-                        <div id="status-text" style="font-size: 0.75rem;">Mengirim: 0%</div>
+                        <div id="status-text" style="font-size: 0.75rem;">Loading: 0%</div>
                         <div class="progress-wrapper"><div id="progress-fill"></div></div>
                     </div>
                 </div>
             </div>
 
             <div id="view-gallery" class="hidden">
-                <h2 style="text-align: center;">Galeri</h2>
+                <h2 style="text-align: center;">Galeri Kenangan</h2>
                 <div style="text-align:center; margin-bottom: 25px;">
                     <audio id="bg-music" controls loop src="https://files.catbox.moe/tcsdus.mp3" style="height: 30px;"></audio>
                 </div>
@@ -136,7 +146,7 @@
                 <div class="nav-item" id="nav-gallery" onclick="pindahTab('gallery')">🖼️ GALERI</div>
             </div>
             <div class="nav-footer">
-                <a href="https://instagram.com/allow_nfl" target="_blank"><i class="fab fa-instagram"></i> Instagram</a>
+                <a href="https://www.instagram.com/allow_nfl" target="_blank"><i class="fab fa-instagram"></i> Instagram</a>
                 <span>©NAUFAL</span>
                 <a href="https://www.tiktok.com/@anandanaufal29" target="_blank"><i class="fab fa-tiktok"></i> Tiktok</a>
             </div>
@@ -146,7 +156,34 @@
     <script>
         const CLOUDINARY_CONFIG = { cloudName: "dtpugpvm1", uploadPreset: "momen_naufal" };
 
-        // FUNGSI HOME
+        // --- FUNGSI GPS & CUACA STABIL ---
+        async function initGPS() {
+            const locBox = document.getElementById('loc-widget');
+            const weatherBox = document.getElementById('weather-widget');
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(async (pos) => {
+                    const { latitude, longitude } = pos.coords;
+                    try {
+                        const resLoc = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+                        const dataLoc = await resLoc.json();
+                        locBox.innerText = `📍 ${dataLoc.address.city || dataLoc.address.town || "Aktif"}`;
+                    } catch (e) { locBox.innerText = "📍 GPS Aktif"; }
+
+                    try {
+                        const resW = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`);
+                        const dataW = await resW.json();
+                        weatherBox.innerText = `🌤️ ${Math.round(dataW.current_weather.temperature)}°C`;
+                    } catch (e) { weatherBox.innerText = "🌤️ --°C"; }
+                }, () => {
+                    locBox.innerText = "📍 GPS Mati";
+                    weatherBox.innerText = "☁️ --°C";
+                }, { enableHighAccuracy: true });
+            }
+        }
+        setInterval(() => document.getElementById('clock-widget').innerText = new Date().toLocaleTimeString('id-ID'), 1000);
+        initGPS();
+
+        // --- NAVIGASI ---
         function startApp() {
             document.getElementById('landing').style.display = 'none';
             document.getElementById('app').style.display = 'block';
@@ -158,45 +195,25 @@
             document.getElementById('landing').style.display = 'flex';
             document.getElementById('app').style.display = 'none';
             document.getElementById('btn-back').style.display = 'none';
-            // Matikan musik jika sedang diputar saat kembali ke home
             document.getElementById('bg-music').pause();
         }
-
-        // GPS & JAM
-        async function initGPS() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(async (pos) => {
-                    const { latitude, longitude } = pos.coords;
-                    try {
-                        const resLoc = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
-                        const dataLoc = await resLoc.json();
-                        document.getElementById('loc-widget').innerText = `📍 ${dataLoc.address.city || "Aktif"}`;
-                    } catch (e) {}
-                    try {
-                        const resW = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`);
-                        const dataW = await resW.json();
-                        document.getElementById('weather-widget').innerText = `🌤️ ${Math.round(dataW.current_weather.temperature)}°C`;
-                    } catch (e) {}
-                });
-            }
-        }
-        setInterval(() => document.getElementById('clock-widget').innerText = new Date().toLocaleTimeString('id-ID'), 1000);
-        initGPS();
 
         function showWarning(pesan) {
             document.getElementById('warning-text').innerText = pesan;
             document.getElementById('modal-warning').style.display = 'flex';
         }
+
         function closeModal(id) {
             document.getElementById(id).style.display = 'none';
             if(id === 'modal-success') location.reload();
         }
 
+        // --- UPLOAD ---
         function uploadToCloudinary() {
             const fileInput = document.getElementById('inp-file');
             const title = document.getElementById('inp-title').value;
-            if (!fileInput.files[0]) return showWarning("Pilih file dulu!");
-            if (!title) return showWarning("Isi judul dulu!");
+            if (!fileInput.files[0]) return showWarning("Pilih file dulu ya, Fal!");
+            if (!title) return showWarning("Judulnya jangan lupa diisi!");
             
             const btn = document.getElementById('btn-save');
             const container = document.getElementById('upload-container');
@@ -221,7 +238,7 @@
                     list.unshift({ id: Date.now(), type: data.resource_type, path: data.secure_url, title: title, desc: document.getElementById('inp-desc').value, date: new Date().toLocaleDateString('id-ID') });
                     localStorage.setItem('naufal_cloudinary', JSON.stringify(list));
                     document.getElementById('modal-success').style.display = 'flex';
-                } else { btn.disabled = false; container.style.display = 'none'; showWarning("Gagal upload!"); }
+                } else { btn.disabled = false; container.style.display = 'none'; showWarning("Gagal upload! Cek internet."); }
             };
             xhr.send(formData);
         }
@@ -237,22 +254,22 @@
         function render() {
             const container = document.getElementById('gallery-list');
             const data = JSON.parse(localStorage.getItem('naufal_cloudinary')) || [];
-            if(data.length === 0) { container.innerHTML = "<p style='text-align:center;'>Kosong.</p>"; return; }
+            if(data.length === 0) { container.innerHTML = "<p style='text-align:center; color:#999; margin-top:40px;'>Belum ada kenangan.</p>"; return; }
             container.innerHTML = data.map(m => `
                 <div class="moment-card">
                     ${m.type === 'video' ? `<video controls src="${m.path}"></video>` : `<img src="${m.path}">`}
                     <div class="moment-body">
                         <small>${m.date}</small>
                         <div style="font-weight:bold;">${m.title}</div>
-                        <p style="font-size:0.85rem;">${m.desc}</p>
-                        <button onclick="hapus(${m.id})" style="color:red; border:none; background:none; cursor:pointer; font-weight:bold;">🗑️ HAPUS</button>
+                        <p style="font-size:0.85rem; color:#666;">${m.desc}</p>
+                        <button onclick="hapus(${m.id})" style="color:red; border:none; background:none; cursor:pointer; font-weight:bold; margin-top:10px;">🗑️ HAPUS</button>
                     </div>
                 </div>
             `).join('');
         }
 
         function hapus(id) {
-            if(confirm("Hapus?")) {
+            if(confirm("Hapus kenangan ini?")) {
                 let list = JSON.parse(localStorage.getItem('naufal_cloudinary')).filter(m => m.id !== id);
                 localStorage.setItem('naufal_cloudinary', JSON.stringify(list));
                 render();
