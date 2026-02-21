@@ -8,50 +8,90 @@
         :root { --primary: #6d5d6e; --bg: #fdfaf6; --accent: #4a3f4b; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; font-family: 'Segoe UI', sans-serif; background-color: var(--bg); overflow-x: hidden; }
 
-        #digital-clock {
-            position: fixed; top: 15px; right: 15px;
-            background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(5px);
-            padding: 8px 15px; border-radius: 20px; font-weight: bold;
-            font-size: 0.9rem; color: var(--primary); z-index: 5000; border: 1px solid rgba(109, 93, 110, 0.2);
+        /* --- WIDGET HEADER --- */
+        .header-widgets {
+            position: fixed; top: 12px; right: 12px;
+            display: flex; gap: 6px; z-index: 5000;
+            flex-wrap: wrap; justify-content: flex-end;
+        }
+        .widget-box {
+            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);
+            padding: 6px 12px; border-radius: 15px; font-weight: bold;
+            font-size: 0.75rem; color: var(--primary); border: 1px solid rgba(109, 93, 110, 0.1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            display: flex; align-items: center; gap: 5px;
         }
 
+        /* --- LANDING PAGE --- */
         #landing {
             position: fixed; inset: 0; 
             background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1200&auto=format&fit=crop');
             background-size: cover; background-position: center;
-            display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 3000; color: white; text-align: center; transition: 0.8s;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 3000; color: white; text-align: center;
         }
-
         .btn-enter { padding: 15px 45px; border-radius: 30px; border: none; cursor: pointer; font-weight: bold; background: white; color: #333; margin-top: 20px; }
 
-        #app { display: none; padding-top: 60px; padding-bottom: 100px; min-height: 100vh; }
+        /* --- APP CONTENT --- */
+        #app { display: none; padding-top: 80px; padding-bottom: 100px; min-height: 100vh; }
         .container { max-width: 500px; margin: 0 auto; padding: 20px; }
         .card { background: white; padding: 25px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 25px; }
         
-        input, textarea, select { width: 100%; padding: 14px; margin: 10px 0; border: 1px solid #eee; border-radius: 15px; box-sizing: border-box; font-family: inherit; }
+        input, textarea { width: 100%; padding: 14px; margin: 10px 0; border: 1px solid #eee; border-radius: 15px; box-sizing: border-box; font-family: inherit; outline: none; }
         .btn-action { background: var(--primary); color: white; border: none; width: 100%; padding: 16px; border-radius: 18px; font-weight: bold; cursor: pointer; }
 
-        /* Progress Bar */
+        /* --- LOADING BAR PELANGI --- */
         #upload-container { display: none; margin-top: 20px; text-align: center; }
-        .progress-wrapper { width: 100%; background: #eee; height: 12px; border-radius: 10px; overflow: hidden; margin-top: 10px; }
-        #progress-fill { width: 0%; height: 100%; background: var(--primary); transition: width 0.2s; }
+        .progress-wrapper { width: 100%; background: #eee; height: 10px; border-radius: 10px; overflow: hidden; margin-top: 8px; }
+        #progress-fill { 
+            width: 0%; height: 100%; 
+            background: linear-gradient(90deg, #ff00d4, #00d2ff, #ff00d4); 
+            background-size: 200% 100%; border-radius: 10px; transition: width 0.3s; 
+            animation: bar-glow 1.5s linear infinite;
+        }
+        @keyframes bar-glow { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
 
-        /* Gallery */
-        .music-box { background: #fff; padding: 15px; border-radius: 20px; margin-bottom: 25px; border: 1px dashed var(--primary); text-align: center; }
-        .moment-card { background: white; border-radius: 20px; overflow: hidden; margin-bottom: 25px; box-shadow: 0 12px 25px rgba(0,0,0,0.06); }
-        .moment-card img, .moment-card video { width: 100%; display: block; }
-        .moment-body { padding: 20px; }
-        
-        .copyright { text-align: center; color: #aaa; font-size: 0.75rem; margin-top: 30px; }
+        /* --- MODAL SUKSES --- */
+        #success-modal {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+            z-index: 6000; justify-content: center; align-items: center; backdrop-filter: blur(4px);
+        }
+        .modal-content { background: white; padding: 30px; border-radius: 25px; width: 80%; max-width: 320px; text-align: center; }
+        .btn-ok { 
+            background: linear-gradient(45deg, #4CAF50, #81C784); color: white; border: none; 
+            padding: 14px 40px; border-radius: 50px; font-weight: bold; cursor: pointer;
+            margin-top: 20px; width: 100%; animation: pulse-green 2s infinite;
+        }
+        @keyframes pulse-green {
+            0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); }
+            70% { box-shadow: 0 0 0 12px rgba(76, 175, 80, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+        }
+
+        /* --- NAV & GALLERY --- */
         nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; padding: 15px 0; border-top: 1px solid #eee; z-index: 1000; }
         .nav-item { flex: 1; text-align: center; color: #bbb; cursor: pointer; font-size: 0.8rem; }
         .nav-item.active { color: var(--primary); font-weight: bold; }
+        .moment-card { background: white; border-radius: 20px; overflow: hidden; margin-bottom: 25px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .moment-card img, .moment-card video { width: 100%; display: block; }
+        .moment-body { padding: 15px; }
         .hidden { display: none; }
     </style>
 </head>
 <body>
 
-    <div id="digital-clock">00:00:00</div>
+    <div class="header-widgets">
+        <div id="loc-widget" class="widget-box">📍 Mencari...</div>
+        <div id="weather-widget" class="widget-box">☁️ --°C</div>
+        <div id="clock-widget" class="widget-box">00:00:00</div>
+    </div>
+
+    <div id="success-modal">
+        <div class="modal-content">
+            <div style="font-size: 50px;">✨</div>
+            <h3>Berhasil!</h3>
+            <button class="btn-ok" onclick="closeSuccessModal()">OKE SIAP! 🚀</button>
+        </div>
+    </div>
 
     <div id="landing">
         <h1>Cloud Museum Naufal ✨</h1>
@@ -63,40 +103,23 @@
             <div id="view-add">
                 <h2 style="text-align: center;">Tambah Kenangan</h2>
                 <div class="card">
-                    <label style="font-size: 0.8rem; font-weight: bold;">Pilih Metode:</label>
-                    <select id="upload-method" onchange="toggleUploadMethod()">
-                        <option value="file">Upload File (Max 100MB)</option>
-                        <option value="link">Tempel Link (Untuk Video 1GB+)</option>
-                    </select>
-
-                    <div id="method-file">
-                        <input type="file" id="inp-file" accept="image/*,video/*">
-                    </div>
-
-                    <div id="method-link" class="hidden">
-                        <input type="text" id="inp-link" placeholder="Tempel link video (Catbox/GDrive/dll)">
-                    </div>
-
-                    <input type="text" id="inp-title" placeholder="Judul kenangan...">
-                    <textarea id="inp-desc" rows="3" placeholder="Cerita momen ini..."></textarea>
-                    
-                    <button id="btn-save" class="btn-action" onclick="handleProcess()">Simpan Kenangan</button>
-                    
+                    <input type="file" id="inp-file" accept="image/*,video/*">
+                    <input type="text" id="inp-title" placeholder="Judul momen...">
+                    <textarea id="inp-desc" rows="3" placeholder="Cerita..."></textarea>
+                    <button id="btn-save" class="btn-action" onclick="uploadToCloudinary()">Upload Sekarang</button>
                     <div id="upload-container">
-                        <div id="status-text">Mengirim...</div>
+                        <div id="status-text" style="font-weight: bold; font-size: 0.75rem;">Mengirim: 0%</div>
                         <div class="progress-wrapper"><div id="progress-fill"></div></div>
                     </div>
                 </div>
             </div>
 
             <div id="view-gallery" class="hidden">
-                <h2 style="text-align: center;">Galeri</h2>
-                <div class="music-box">
-                    <p>🎵 Putar Musik</p>
-                    <audio id="bg-music" controls loop src="https://files.catbox.moe/tcsdus.mp3"></audio>
+                <h2 style="text-align: center;">Galeri Kenangan</h2>
+                <div style="text-align:center; margin-bottom: 20px;">
+                    <audio id="bg-music" controls loop src="https://files.catbox.moe/tcsdus.mp3" style="height: 35px;"></audio>
                 </div>
                 <div id="gallery-list"></div>
-                <div class="copyright">Copyright © Naufal</div>
             </div>
         </div>
 
@@ -109,11 +132,38 @@
     <script>
         const CLOUDINARY_CONFIG = { cloudName: "dtpugpvm1", uploadPreset: "momen_naufal" };
 
+        async function initGPS() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(async (pos) => {
+                    const { latitude, longitude } = pos.coords;
+                    
+                    // Nama Lokasi Asli
+                    try {
+                        const resLoc = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+                        const dataLoc = await resLoc.json();
+                        const city = dataLoc.address.city || dataLoc.address.town || dataLoc.address.village || "Lokasi Aktif";
+                        document.getElementById('loc-widget').innerText = `📍 ${city}`;
+                    } catch (e) { document.getElementById('loc-widget').innerText = "📍 Gagal Nama"; }
+
+                    // Cuaca Asli
+                    try {
+                        const resW = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`);
+                        const dataW = await resW.json();
+                        document.getElementById('weather-widget').innerText = `🌤️ ${Math.round(dataW.current_weather.temperature)}°C`;
+                    } catch (e) { document.getElementById('weather-widget').innerText = "🌤️ --°C"; }
+                }, () => {
+                    // Jika GPS mati/ditolak
+                    document.getElementById('loc-widget').innerText = "📍 GPS Mati";
+                    document.getElementById('weather-widget').innerText = "☁️ --°C";
+                });
+            }
+        }
+
         function updateClock() {
-            const now = new Date();
-            document.getElementById('digital-clock').innerText = now.toLocaleTimeString('id-ID');
+            document.getElementById('clock-widget').innerText = new Date().toLocaleTimeString('id-ID');
         }
         setInterval(updateClock, 1000);
+        initGPS();
 
         function startApp() {
             document.getElementById('landing').style.display = 'none';
@@ -121,31 +171,17 @@
             render();
         }
 
-        function toggleUploadMethod() {
-            const method = document.getElementById('upload-method').value;
-            document.getElementById('method-file').classList.toggle('hidden', method !== 'file');
-            document.getElementById('method-link').classList.toggle('hidden', method !== 'link');
-        }
-
-        function handleProcess() {
-            const method = document.getElementById('upload-method').value;
-            if (method === 'file') {
-                uploadToCloudinary();
-            } else {
-                saveByLink();
-            }
-        }
-
         function uploadToCloudinary() {
             const fileInput = document.getElementById('inp-file');
             const title = document.getElementById('inp-title').value;
-            if (!fileInput.files[0] || !title) return alert("Isi data!");
-
+            if (!fileInput.files[0] || !title) return alert("Lengkapi data!");
+            
             const file = fileInput.files[0];
+            if (file.size > 100 * 1024 * 1024) return alert("Max 100MB!");
+
             const btn = document.getElementById('btn-save');
             const container = document.getElementById('upload-container');
             const bar = document.getElementById('progress-fill');
-            const statusText = document.getElementById('status-text');
 
             btn.disabled = true;
             container.style.display = 'block';
@@ -156,49 +192,26 @@
 
             const xhr = new XMLHttpRequest();
             xhr.open("POST", `https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/auto/upload`);
-
             xhr.upload.onprogress = (e) => {
                 const percent = Math.round((e.loaded / e.total) * 100);
                 bar.style.width = percent + '%';
-                statusText.innerText = `Mengirim: ${percent}%`;
+                document.getElementById('status-text').innerText = `Mengirim: ${percent}%`;
             };
-
             xhr.onload = () => {
                 const data = JSON.parse(xhr.responseText);
                 if (xhr.status === 200) {
-                    simpanLocal(data.secure_url, data.resource_type);
-                } else {
-                    alert("Error: " + data.error.message);
-                    btn.disabled = false;
-                }
+                    let list = JSON.parse(localStorage.getItem('naufal_cloudinary')) || [];
+                    list.unshift({ id: Date.now(), type: data.resource_type, path: data.secure_url, title: title, desc: document.getElementById('inp-desc').value, date: new Date().toLocaleDateString('id-ID') });
+                    localStorage.setItem('naufal_cloudinary', JSON.stringify(list));
+                    document.getElementById('success-modal').style.display = 'flex';
+                } else { alert("Gagal!"); btn.disabled = false; container.style.display = 'none'; }
             };
             xhr.send(formData);
         }
 
-        function saveByLink() {
-            const link = document.getElementById('inp-link').value;
-            const title = document.getElementById('inp-title').value;
-            if (!link || !title) return alert("Isi link dan judul!");
-            simpanLocal(link, 'video'); // Asumsi link luar adalah video
-        }
-
-        function simpanLocal(url, type) {
-            const title = document.getElementById('inp-title').value;
-            const desc = document.getElementById('inp-desc').value;
-            const momentData = {
-                id: Date.now(),
-                type: type,
-                path: url,
-                title: title,
-                desc: desc,
-                date: new Date().toLocaleDateString('id-ID')
-            };
-            let list = JSON.parse(localStorage.getItem('naufal_cloudinary')) || [];
-            list.unshift(momentData);
-            localStorage.setItem('naufal_cloudinary', JSON.stringify(list));
-            
-            alert("Berhasil!");
-            location.reload();
+        function closeSuccessModal() {
+            document.getElementById('success-modal').style.display = 'none';
+            location.reload(); 
         }
 
         function pindahTab(tab) {
@@ -212,13 +225,15 @@
         function render() {
             const container = document.getElementById('gallery-list');
             const data = JSON.parse(localStorage.getItem('naufal_cloudinary')) || [];
+            if(data.length === 0) { container.innerHTML = "<p style='text-align:center;'>Kosong.</p>"; return; }
             container.innerHTML = data.map(m => `
                 <div class="moment-card">
                     ${m.type === 'video' ? `<video controls src="${m.path}"></video>` : `<img src="${m.path}">`}
                     <div class="moment-body">
-                        <div style="font-weight:bold;">${m.title}</div>
-                        <p style="font-size:0.9rem; color:#666;">${m.desc}</p>
-                        <button onclick="hapus(${m.id})" style="color:red; border:none; background:none; cursor:pointer;">Hapus</button>
+                        <small>${m.date}</small>
+                        <div style="font-weight:bold; margin: 5px 0;">${m.title}</div>
+                        <p style="font-size:0.85rem; color:#666; margin:0;">${m.desc}</p>
+                        <button onclick="hapus(${m.id})" style="color:red; border:none; background:none; cursor:pointer; font-size:0.75rem; margin-top:10px; padding:0;">🗑️ Hapus</button>
                     </div>
                 </div>
             `).join('');
