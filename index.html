@@ -167,7 +167,7 @@
                         const resLoc = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
                         const dataLoc = await resLoc.json();
                         locBox.innerText = `📍 ${dataLoc.address.city || dataLoc.address.town || "Aktif"}`;
-                    } catch (e) { locBox.innerText = "📍 GPS Aktif"; }
+                    } catch (e) { locBox.innerText = "📍Mencari lokasi"; }
 
                     try {
                         const resW = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`);
@@ -212,7 +212,7 @@
         function uploadToCloudinary() {
             const fileInput = document.getElementById('inp-file');
             const title = document.getElementById('inp-title').value;
-            if (!fileInput.files[0]) return showWarning("Pilih file dulu ya, Fal!");
+            if (!fileInput.files[0]) return showWarning("Pilih file dulu ya!");
             if (!title) return showWarning("Judulnya jangan lupa diisi!");
             
             const btn = document.getElementById('btn-save');
