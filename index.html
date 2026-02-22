@@ -3,97 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Penyimpanan Kenangan</title>
+    <title>Penyimpanan Kenangan - Naufal</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --primary: #6d5d6e; --bg: #fdfaf6; --accent: #4a3f4b; }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; font-family: 'Segoe UI', sans-serif; background-color: var(--bg); overflow-x: hidden; }
+        :root { --primary: #6d5d6e; --bg: #fdfaf6; --accent: #4a3f4b; --danger: #ff4d4d; --success: #2ecc71; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; font-family: 'Segoe UI', sans-serif; background-color: var(--bg); overflow-x: hidden; color: #333; }
 
-        .btn-back-home {
-            position: fixed; top: 12px; left: 12px;
-            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);
-            width: 40px; height: 40px; border-radius: 12px;
-            display: none; align-items: center; justify-content: center;
-            color: var(--primary); border: 1px solid rgba(109, 93, 110, 0.1);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05); z-index: 5000; cursor: pointer;
-        }
+        /* Widgets */
+        .btn-back-home { position: fixed; top: 12px; left: 12px; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); width: 40px; height: 40px; border-radius: 12px; display: none; align-items: center; justify-content: center; color: var(--primary); border: 1px solid rgba(109, 93, 110, 0.1); box-shadow: 0 4px 10px rgba(0,0,0,0.05); z-index: 5000; cursor: pointer; }
+        .header-widgets { position: fixed; top: 12px; right: 12px; display: flex; gap: 6px; z-index: 5000; flex-wrap: wrap; justify-content: flex-end; }
+        .widget-box { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); padding: 6px 12px; border-radius: 15px; font-weight: bold; font-size: 0.75rem; color: var(--primary); border: 1px solid rgba(109, 93, 110, 0.1); box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 5px; }
 
-        .header-widgets {
-            position: fixed; top: 12px; right: 12px;
-            display: flex; gap: 6px; z-index: 5000;
-            flex-wrap: wrap; justify-content: flex-end;
-        }
-        .widget-box {
-            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);
-            padding: 6px 12px; border-radius: 15px; font-weight: bold;
-            font-size: 0.75rem; color: var(--primary); border: 1px solid rgba(109, 93, 110, 0.1);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 5px;
-        }
+        /* Music Box */
+        .music-card { display: flex; align-items: center; gap: 15px; padding: 15px !important; margin-bottom: 20px; border: 1px solid rgba(109,93,110,0.1); background: linear-gradient(135deg, #fff, #f9f7f9); border-radius: 20px; }
+        .disc-wrapper { position: relative; width: 50px; height: 50px; }
+        .disc { width: 100%; height: 100%; background: #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; border: 4px solid #444; box-shadow: 0 4px 10px rgba(0,0,0,0.2); animation: spin 3s linear infinite; animation-play-state: paused; }
+        .disc.playing { animation-play-state: running; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .music-info { flex: 1; }
+        .song-title { font-size: 0.8rem; font-weight: bold; color: var(--primary); margin: 0; }
+        .song-artist { font-size: 0.65rem; color: #888; margin: 0; }
+        .btn-play { background: var(--primary); color: white; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
-        #landing {
-            position: fixed; inset: 0; 
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1200&auto=format&fit=crop');
-            background-size: cover; background-position: center;
-            display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 3000; color: white; text-align: center; padding: 20px;
-        }
+        /* Landing */
+        #landing { position: fixed; inset: 0; background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1200&auto=format&fit=crop'); background-size: cover; background-position: center; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 3000; color: white; text-align: center; padding: 20px; }
         .btn-enter { padding: 15px 45px; border-radius: 30px; border: none; cursor: pointer; font-weight: bold; background: white; color: #333; margin-top: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); transition: 0.3s; }
-        .btn-enter:active { transform: scale(0.95); }
 
-        .btn-outline {
-            padding: 12px 35px; border-radius: 30px; border: 2px solid white; 
-            cursor: pointer; font-weight: bold; background: transparent; 
-            color: white; margin-top: 15px; transition: 0.3s; font-size: 0.9rem;
-            text-decoration: none; display: inline-block;
-        }
-        .btn-outline:hover { background: white; color: #333; }
-
+        /* App Main */
         #app { display: none; padding-top: 80px; padding-bottom: 140px; min-height: 100vh; }
         .container { max-width: 500px; margin: 0 auto; padding: 20px; }
         .card { background: white; padding: 25px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 25px; }
-        
-        input, textarea { width: 100%; padding: 14px; margin: 10px 0; border: 1px solid #eee; border-radius: 15px; box-sizing: border-box; font-family: inherit; outline: none; }
-        
-        .btn-action { background: var(--primary); color: white; border: none; width: 100%; padding: 16px; border-radius: 18px; font-weight: bold; cursor: pointer; }
-        .btn-action:disabled { background: #ccc; cursor: not-allowed; }
 
+        /* Progress Bar */
         #upload-container { display: none; margin-top: 20px; text-align: center; }
         .progress-wrapper { width: 100%; background: #eee; height: 10px; border-radius: 10px; overflow: hidden; margin-top: 8px; }
-        #progress-fill { width: 0%; height: 100%; background: linear-gradient(90deg, #ff00d4, #00d2ff, #ff00d4); background-size: 200% 100%; animation: bar-glow 1.5s linear infinite; }
+        #progress-fill { width: 0%; height: 100%; background: linear-gradient(90deg, #ff00d4, #00d2ff, #ff00d4); background-size: 200% 100%; animation: bar-glow 1.5s linear infinite; transition: width 0.3s; }
         @keyframes bar-glow { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
 
-        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 6000; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
-        .modal-content { background: white; padding: 30px; border-radius: 25px; width: 85%; max-width: 320px; text-align: center; }
-        .btn-modal { color: white; border: none; padding: 14px 40px; border-radius: 50px; font-weight: bold; cursor: pointer; margin-top: 10px; width: 100%; }
-        .success-bg .btn-modal { background: var(--primary); }
-        .danger-bg .btn-modal { background: #ff4d4d; }
+        /* Gallery */
+        .gallery-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .action-group { display: flex; gap: 8px; align-items: center; }
+        .btn-icon { background: var(--primary); color: white; border: none; width: 35px; height: 35px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .btn-text-action { background: var(--primary); color: white; border: none; padding: 0 15px; height: 35px; border-radius: 10px; font-size: 0.7rem; font-weight: bold; cursor: pointer; }
+        .moment-card { background: white; border-radius: 20px; overflow: hidden; margin-bottom: 25px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); position: relative; }
+        .moment-card img, .moment-card video { width: 100%; display: block; max-height: 400px; object-fit: cover; cursor: pointer; }
+        .moment-body { padding: 15px; }
+        .check-box { position: absolute; top: 12px; right: 12px; width: 22px; height: 22px; z-index: 100; cursor: pointer; display: none; accent-color: var(--primary); }
+        .select-active .check-box { display: block; }
 
+        /* Footer & Nav */
         nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; flex-direction: column; padding: 10px 0; border-top: 1px solid #eee; z-index: 1000; }
         .nav-buttons { display: flex; width: 100%; }
-        .nav-item { flex: 1; text-align: center; color: #bbb; cursor: pointer; font-size: 0.8rem; font-weight: bold; padding: 5px 0; }
+        .nav-item { flex: 1; text-align: center; color: #bbb; cursor: pointer; font-size: 0.75rem; font-weight: bold; padding: 5px 0; }
         .nav-item.active { color: var(--primary); }
         
-        .nav-footer { display: flex; align-items: center; justify-content: space-between; padding: 10px 20px 5px 20px; margin-top: 8px; border-top: 1px solid #f5f5f5; }
-        .nav-footer a { text-decoration: none; display: flex; align-items: center; gap: 6px; font-size: 0.75rem; font-weight: bold; color: #333; }
-        .nav-footer span { color: #ccc; font-size: 0.65rem; font-weight: bold; letter-spacing: 1.5px; flex: 1; text-align: center; }
+        .nav-footer { display: flex; align-items: center; justify-content: space-between; padding: 10px 20px; margin-top: 8px; border-top: 1px solid #f5f5f5; font-size: 0.7rem; font-weight: bold; }
+        .sosmed-link { text-decoration: none; color: #555; display: flex; align-items: center; gap: 5px; }
+        .sosmed-link i { font-size: 1rem; }
 
-        .moment-card { background: white; border-radius: 20px; overflow: hidden; margin-bottom: 25px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); position: relative; transition: 0.3s; border: 2px solid transparent; }
-        .moment-card img, .moment-card video { width: 100%; display: block; background: #000; }
-        .moment-body { padding: 15px; }
-
-        .check-box { position: absolute; top: 10px; right: 10px; width: 24px; height: 24px; z-index: 100; cursor: pointer; display: none; accent-color: var(--primary); }
-        .select-active .check-box { display: block; }
-        .moment-card:has(.check-box:checked) { border-color: var(--primary); transform: scale(0.97); }
-
+        /* Modals & Others */
+        #preview-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 7000; justify-content: center; align-items: center; padding: 20px; }
+        #preview-content { max-width: 100%; max-height: 80vh; border-radius: 15px; object-fit: contain; }
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 6000; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
+        .modal-content { background: white; padding: 30px; border-radius: 25px; width: 85%; max-width: 320px; text-align: center; }
+        .btn-modal { color: white; border: none; padding: 14px 40px; border-radius: 50px; font-weight: bold; cursor: pointer; margin-top: 10px; width: 100%; background: var(--primary); }
         .hidden { display: none !important; }
+        input, textarea { width: 100%; padding: 14px; margin: 10px 0; border: 1px solid #eee; border-radius: 15px; box-sizing: border-box; outline: none; }
+        .btn-action { background: var(--primary); color: white; border: none; width: 100%; padding: 16px; border-radius: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .tab-upload { display: flex; background: #f0f0f0; border-radius: 12px; padding: 4px; margin-bottom: 15px; }
+        .tab-btn { flex: 1; border: none; background: none; padding: 8px; font-size: 0.75rem; font-weight: bold; cursor: pointer; border-radius: 10px; color: #888; }
+        .tab-btn.active { background: white; color: var(--primary); }
     </style>
 </head>
 <body>
 
     <audio id="bg-music" loop src="https://file.garden/aZnYook33hMet4d7/kota%20ini%20tak%20sama%20tanpamu%20-%20Nadhif%20Basalamah%20_%20Lirik%20Lagu.mp3"></audio>
 
-    <div id="btn-back" class="btn-back-home" onclick="goHome()">
-        <i class="fa-solid fa-house"></i>
-    </div>
+    <div id="btn-back" class="btn-back-home" onclick="goHome()"><i class="fa-solid fa-house"></i></div>
 
     <div class="header-widgets">
         <div id="loc-widget" class="widget-box">📍 Mencari...</div>
@@ -101,37 +87,22 @@
         <div id="clock-widget" class="widget-box">00:00:00</div>
     </div>
 
-    <div id="modal-success" class="modal-overlay success-bg">
+    <div id="preview-modal" onclick="closePreview()"><div id="preview-container" style="display:flex; justify-content:center; width:100%;"></div></div>
+    <div id="modal-success" class="modal-overlay"><div class="modal-content"><div style="font-size:50px;">✨</div><h3>Berhasil!</h3><button class="btn-modal" onclick="closeModalAfterUpload()">OKE!</button></div></div>
+    <div id="modal-warning" class="modal-overlay"><div class="modal-content"><div style="font-size:50px;">⚠️</div><h3>Ops!</h3><p id="warning-text"></p><button class="btn-modal" style="background:var(--danger)" onclick="closeModal('modal-warning')">MENGERTI</button></div></div>
+    <div id="modal-confirm" class="modal-overlay">
         <div class="modal-content">
-            <div style="font-size: 50px;">✨</div>
-            <h3 id="success-title">Berhasil!</h3>
-            <button class="btn-modal" onclick="closeModalAfterUpload('modal-success')">OKE SIAP!</button>
-        </div>
-    </div>
-
-    <div id="modal-warning" class="modal-overlay danger-bg">
-        <div class="modal-content">
-            <div style="font-size: 50px;">⚠️</div>
-            <h3>Ops!</h3>
-            <p id="warning-text" style="color:#666; font-size: 0.85rem;"></p>
-            <button class="btn-modal" onclick="closeModal('modal-warning')">MENGERTI</button>
-        </div>
-    </div>
-
-    <div id="modal-confirm" class="modal-overlay danger-bg">
-        <div class="modal-content">
-            <div style="font-size: 50px;">🗑️</div>
-            <h3>Hapus Kenangan?</h3>
-            <p id="confirm-text" style="color:#666; font-size: 0.85rem;">Momen pilihan akan dihapus.</p>
-            <button class="btn-modal" onclick="prosesHapus()">YA, HAPUS!</button>
+            <div style="font-size:50px;" id="confirm-icon">🗑️</div>
+            <h3 id="confirm-title">Konfirmasi</h3>
+            <button class="btn-modal" id="btn-confirm-action" onclick="eksekusiHapus()">YA</button>
             <button class="btn-modal" style="background:#eee; color:#333;" onclick="closeModal('modal-confirm')">BATAL</button>
         </div>
     </div>
 
     <div id="landing">
-        <h1 style="letter-spacing: 2px;">Penyimpanan Kenangan By Naufal ✨</h1>
-        <button class="btn-enter" onclick="startApp()">Masuk Untuk melanjutkannya</button>
-        <a href="https://www.naufal.fun" target="_blank" class="btn-outline">Kunjungi Web developer</a>
+        <h1>Penyimpanan Kenangan By Naufal ✨</h1>
+        <button class="btn-enter" onclick="startApp()">Masuk Galeri</button>
+        <a href="https://www.naufal.fun" target="_blank" style="color:white; margin-top:15px; font-size:0.8rem;">naufal.fun</a>
     </div>
 
     <div id="app">
@@ -139,29 +110,37 @@
             <div id="view-add">
                 <h2 style="text-align: center;">Tambah Kenangan</h2>
                 <div class="card">
-                    <input type="file" id="inp-file" accept="image/*,video/*">
+                    <div class="tab-upload">
+                        <button id="tab-file" class="tab-btn active" onclick="switchUpload('file')">FILE</button>
+                        <button id="tab-url" class="tab-btn" onclick="switchUpload('url')">LINK</button>
+                    </div>
+                    <div id="group-file"><input type="file" id="inp-file" accept="image/*,video/*"></div>
+                    <div id="group-url" class="hidden"><input type="text" id="inp-url" placeholder="Paste link video/foto..."></div>
                     <input type="text" id="inp-title" placeholder="Judul momen...">
                     <textarea id="inp-desc" rows="3" placeholder="Cerita momen ini..."></textarea>
-                    <button id="btn-save" class="btn-action" onclick="uploadToCloudinary()">Upload Kenangan</button>
+                    <button id="btn-save" class="btn-action" onclick="uploadHandler()">SIMPAN</button>
                     <div id="upload-container">
-                        <div id="status-text" style="font-size: 0.75rem; font-weight: bold; color: var(--primary);">Mengirim: 0%</div>
+                        <div id="status-text" style="font-size:0.75rem; font-weight:bold;">Proses: 0%</div>
                         <div class="progress-wrapper"><div id="progress-fill"></div></div>
                     </div>
                 </div>
             </div>
 
             <div id="view-gallery" class="hidden">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <h2 style="margin: 0;">Galeri Kenangan</h2>
-                    <div>
-                        <button id="btn-pilih" onclick="toggleModePilih(true)" style="background: var(--primary); color: white; border: none; padding: 6px 14px; border-radius: 10px; font-size: 0.75rem; font-weight: bold;">PILIH</button>
-                        <button id="btn-hapus" onclick="konfirmasiHapus()" class="hidden" style="background: #ff4d4d; color: white; border: none; padding: 6px 14px; border-radius: 10px; font-size: 0.75rem; font-weight: bold;">HAPUS</button>
-                        <button id="btn-batal" onclick="toggleModePilih(false)" class="hidden" style="background: #ccc; color: white; border: none; padding: 6px 14px; border-radius: 10px; font-size: 0.75rem; font-weight: bold; margin-left: 5px;">BATAL</button>
-                    </div>
+                <div class="card music-card">
+                    <div class="disc-wrapper"><div id="music-disc" class="disc">💿</div></div>
+                    <div class="music-info"><p class="song-title">Kota Ini Tak Sama Tanpamu</p><p class="song-artist">Nadhif Basalamah</p></div>
+                    <button class="btn-play" onclick="toggleMusic()"><i id="music-icon" class="fa-solid fa-pause"></i></button>
                 </div>
-                <div style="text-align:center; margin-bottom: 25px; background: rgba(109, 93, 110, 0.05); padding: 10px; border-radius: 15px;">
-                    <p style="font-size: 0.7rem; margin: 0 0 5px 0; color: var(--primary); font-weight: bold;">🎵 Nadhif Basalamah - Kota Ini Tak Sama Tanpamu</p>
-                    <button onclick="toggleMusic()" id="btn-music-play" style="background: var(--primary); color:white; border:none; padding: 5px 15px; border-radius: 20px; font-size: 0.7rem; cursor:pointer;">PAUSE</button>
+                <div class="gallery-header">
+                    <h2 id="gallery-title" style="margin:0;">Galeri</h2>
+                    <div class="action-group">
+                        <button id="btn-pilih" class="btn-text-action" onclick="toggleModePilih(true)">PILIH</button>
+                        <button id="btn-sampah-toggle" class="btn-icon" onclick="switchGalleryView()"><i id="trash-icon" class="fa-solid fa-trash-can"></i></button>
+                        <button id="btn-hapus-action" class="btn-icon hidden" style="background:var(--danger)" onclick="konfirmasiHapus()"><i class="fa-solid fa-trash"></i></button>
+                        <button id="btn-pulihkan-action" class="btn-icon hidden" style="background:var(--success)" onclick="konfirmasiPulihkan()"><i class="fa-solid fa-rotate-left"></i></button>
+                        <button id="btn-batal" class="btn-text-action hidden" style="background:#ccc" onclick="toggleModePilih(false)">BATAL</button>
+                    </div>
                 </div>
                 <div id="gallery-list"></div>
             </div>
@@ -173,167 +152,176 @@
                 <div class="nav-item" id="nav-gallery" onclick="pindahTab('gallery')">🖼️ GALERI</div>
             </div>
             <div class="nav-footer">
-                <a href="https://www.instagram.com/allow_nfl" target="_blank"><i class="fab fa-instagram"></i> Instagram</a>
+                <a href="https://www.instagram.com/allow_nfl" target="_blank" class="sosmed-link">
+                    <i class="fa-brands fa-instagram" style="color: #E1306C;"></i> Instagram
+                </a>
                 <span>©NAUFAL</span>
-                <a href="https://www.tiktok.com/@anandanaufal29" target="_blank"><i class="fab fa-tiktok"></i> Tiktok</a>
+                <a href="https://www.tiktok.com/@anandanaufal29" target="_blank" class="sosmed-link">
+                    <i class="fa-brands fa-tiktok" style="color: #000;"></i> TikTok
+                </a>
             </div>
         </nav>
     </div>
 
     <script>
         const CONFIG = { cloudName: "dtpugpvm1", uploadPreset: "momen_naufal" };
-        let selectedIds = [];
+        let selectedIds = [], uploadType = 'file', currentMode = 'utama';
         const audio = document.getElementById('bg-music');
 
-        // --- GPS & CUACA ---
-        async function initGPS() {
-            const locBox = document.getElementById('loc-widget');
-            const weatherBox = document.getElementById('weather-widget');
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(async (pos) => {
-                    const { latitude, longitude } = pos.coords;
-                    try {
-                        const resLoc = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
-                        const dataLoc = await resLoc.json();
-                        const wilayah = dataLoc.address.village || dataLoc.address.suburb || dataLoc.address.city || "Aktif";
-                        locBox.innerHTML = `📍 ${wilayah}`;
+        function getDB(n) { return JSON.parse(localStorage.getItem(n)) || []; }
+        function saveDB(n, d) { localStorage.setItem(n, JSON.stringify(d)); }
 
-                        const resW = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code&timezone=auto`);
-                        const dataW = await resW.json();
-                        const temp = Math.round(dataW.current.temperature_2m);
-                        const code = dataW.current.weather_code;
-                        let icon = "🌤️";
-                        if (code >= 1 && code <= 3) icon = "⛅";
-                        if (code >= 51 && code <= 67) icon = "🌦️";
-                        if (code >= 80 && code <= 82) icon = "🌧️";
-                        weatherBox.innerHTML = `${icon} ${temp}°C`;
-                    } catch (e) { console.log("Weather error"); }
-                }, null, { enableHighAccuracy: true });
-            }
+        function startApp() { 
+            document.getElementById('landing').style.display='none'; 
+            document.getElementById('app').style.display='block'; 
+            document.getElementById('btn-back').style.display='flex'; 
+            audio.play().catch(e=>{}); 
+            render(); initGPS(); 
+            document.getElementById('music-disc').classList.add('playing');
         }
-
-        // --- MUSIK ---
-        async function playMusic() {
-            try {
-                await audio.play();
-                document.getElementById('btn-music-play').innerText = "PAUSE";
-            } catch (err) { console.log("Waiting for interaction"); }
-        }
-
+        
         function toggleMusic() {
-            if (audio.paused) { playMusic(); } 
-            else { audio.pause(); document.getElementById('btn-music-play').innerText = "PLAY"; }
+            const disc = document.getElementById('music-disc'), icon = document.getElementById('music-icon');
+            if (audio.paused) { audio.play(); disc.classList.add('playing'); icon.className = "fa-solid fa-pause"; } 
+            else { audio.pause(); disc.classList.remove('playing'); icon.className = "fa-solid fa-play"; }
         }
 
-        function startApp() {
-            document.getElementById('landing').style.display = 'none';
-            document.getElementById('app').style.display = 'block';
-            document.getElementById('btn-back').style.display = 'flex';
-            playMusic();
-            render();
+        function openPreview(path, type) {
+            if(document.getElementById('gallery-list').classList.contains('select-active')) return;
+            document.getElementById('preview-container').innerHTML = (type === 'video') 
+                ? `<video id="preview-content" src="${path}" controls autoplay></video>` 
+                : `<img id="preview-content" src="${path}">`;
+            document.getElementById('preview-modal').style.display = 'flex';
         }
 
-        function goHome() { location.reload(); }
+        function closePreview() { document.getElementById('preview-modal').style.display = 'none'; }
 
-        function pindahTab(tab) {
-            document.getElementById('view-add').classList.toggle('hidden', tab !== 'add');
-            document.getElementById('view-gallery').classList.toggle('hidden', tab !== 'gallery');
-            document.getElementById('nav-add').classList.toggle('active', tab === 'add');
-            document.getElementById('nav-gallery').classList.toggle('active', tab === 'gallery');
-            if(tab === 'gallery') render();
+        function pindahTab(t) {
+            document.getElementById('view-add').classList.toggle('hidden', t!=='add');
+            document.getElementById('view-gallery').classList.toggle('hidden', t!=='gallery');
+            document.getElementById('nav-add').classList.toggle('active', t==='add');
+            document.getElementById('nav-gallery').classList.toggle('active', t==='gallery');
+            if(t==='gallery') render();
         }
 
-        function uploadToCloudinary() {
-            const fileInput = document.getElementById('inp-file');
-            const titleInput = document.getElementById('inp-title');
-            const descInput = document.getElementById('inp-desc');
-            if(!fileInput.files[0] || !titleInput.value) return showWarning("Isi judul & pilih file!");
+        function switchGalleryView() {
+            currentMode = (currentMode === 'utama') ? 'sampah' : 'utama';
+            document.getElementById('trash-icon').className = (currentMode === 'sampah') ? "fa-solid fa-images" : "fa-solid fa-trash-can";
+            document.getElementById('gallery-title').innerText = (currentMode === 'sampah') ? "Sampah 🗑️" : "Galeri";
+            toggleModePilih(false); render();
+        }
 
-            const btn = document.getElementById('btn-save');
-            const container = document.getElementById('upload-container');
-            const bar = document.getElementById('progress-fill');
-            btn.disabled = true; container.style.display = 'block';
+        function toggleModePilih(aktif) {
+            document.getElementById('gallery-list').classList.toggle('select-active', aktif);
+            document.getElementById('btn-pilih').classList.toggle('hidden', aktif);
+            document.getElementById('btn-sampah-toggle').classList.toggle('hidden', aktif);
+            document.getElementById('btn-batal').classList.toggle('hidden', !aktif);
+            document.getElementById('btn-hapus-action').classList.toggle('hidden', !aktif);
+            if(currentMode === 'sampah') document.getElementById('btn-pulihkan-action').classList.toggle('hidden', !aktif);
+        }
 
-            const fd = new FormData();
-            fd.append("file", fileInput.files[0]);
-            fd.append("upload_preset", CONFIG.uploadPreset);
+        function switchUpload(type) {
+            uploadType = type;
+            document.getElementById('group-file').classList.toggle('hidden', type!=='file');
+            document.getElementById('group-url').classList.toggle('hidden', type!=='url');
+            document.getElementById('tab-file').classList.toggle('active', type==='file');
+            document.getElementById('tab-url').classList.toggle('active', type==='url');
+        }
 
+        function uploadHandler() {
+            const title = document.getElementById('inp-title').value;
+            if(!title) return showWarning("Isi judul!");
+            const source = (uploadType==='file') ? document.getElementById('inp-file').files[0] : document.getElementById('inp-url').value;
+            if(!source) return showWarning("Pilih file/link!");
+            
+            document.getElementById('upload-container').style.display='block';
+            const fd = new FormData(); fd.append("file", source); fd.append("upload_preset", CONFIG.uploadPreset);
             const xhr = new XMLHttpRequest();
             xhr.open("POST", `https://api.cloudinary.com/v1_1/${CONFIG.cloudName}/auto/upload`);
             xhr.upload.onprogress = (e) => {
-                const p = Math.round((e.loaded / e.total) * 100);
-                bar.style.width = p + '%';
-                document.getElementById('status-text').innerText = `Mengirim: ${p}%`;
+                const p = Math.round((e.loaded / e.total)*100);
+                document.getElementById('progress-fill').style.width = p + '%';
+                document.getElementById('status-text').innerText = `Proses: ${p}%`;
             };
             xhr.onload = () => {
-                if(xhr.status === 200) {
-                    const d = JSON.parse(xhr.responseText);
-                    let db = JSON.parse(localStorage.getItem('naufal_cloudinary')) || [];
-                    db.unshift({ id: Date.now(), type: d.resource_type, path: d.secure_url, title: titleInput.value, desc: descInput.value, date: new Date().toLocaleDateString('id-ID') });
-                    localStorage.setItem('naufal_cloudinary', JSON.stringify(db));
-                    document.getElementById('modal-success').style.display = 'flex';
-                } else { btn.disabled = false; container.style.display = 'none'; showWarning("Gagal upload!"); }
+                const d = JSON.parse(xhr.responseText);
+                let db = getDB('naufal_cloudinary');
+                const fmtDate = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+                db.unshift({ id: Date.now(), type: d.resource_type, path: d.secure_url, title, desc: document.getElementById('inp-desc').value, date: fmtDate });
+                saveDB('naufal_cloudinary', db);
+                document.getElementById('modal-success').style.display='flex';
             };
             xhr.send(fd);
         }
 
-        function closeModalAfterUpload(id) {
-            document.getElementById(id).style.display = 'none';
-            document.getElementById('inp-file').value = "";
-            document.getElementById('inp-title').value = "";
-            document.getElementById('inp-desc').value = "";
-            document.getElementById('btn-save').disabled = false;
-            document.getElementById('upload-container').style.display = 'none';
-            pindahTab('gallery');
-        }
-
-        function toggleModePilih(aktif) {
-            const list = document.getElementById('gallery-list');
-            if (list) list.classList.toggle('select-active', aktif);
-            document.getElementById('btn-pilih').classList.toggle('hidden', aktif);
-            document.getElementById('btn-hapus').classList.toggle('hidden', !aktif);
-            document.getElementById('btn-batal').classList.toggle('hidden', !aktif);
-            if(!aktif) render();
-        }
-
-        function konfirmasiHapus() {
-            const terpilih = document.querySelectorAll('.check-box:checked');
-            if(terpilih.length === 0) return showWarning("Pilih kenangan dulu!");
-            selectedIds = Array.from(terpilih).map(el => parseInt(el.value));
-            document.getElementById('modal-confirm').style.display = 'flex';
-        }
-
-        function prosesHapus() {
-            let db = JSON.parse(localStorage.getItem('naufal_cloudinary')) || [];
-            db = db.filter(item => !selectedIds.includes(item.id));
-            localStorage.setItem('naufal_cloudinary', JSON.stringify(db));
-            closeModal('modal-confirm');
-            toggleModePilih(false);
-            render();
+        function eksekusiHapus() {
+            let utama = getDB('naufal_cloudinary'), sampah = getDB('naufal_sampah');
+            const action = document.getElementById('btn-confirm-action').innerText;
+            if(action === "PINDAHKAN" || document.getElementById('confirm-title').innerText.includes("Sampah")) {
+                const pindah = utama.filter(i => selectedIds.includes(i.id));
+                utama = utama.filter(i => !selectedIds.includes(i.id));
+                sampah = [...pindah, ...sampah];
+            } else if(action === "PULIHKAN") {
+                const balikin = sampah.filter(i => selectedIds.includes(i.id));
+                sampah = sampah.filter(i => !selectedIds.includes(i.id));
+                utama = [...balikin, ...utama];
+            } else { sampah = sampah.filter(i => !selectedIds.includes(i.id)); }
+            saveDB('naufal_cloudinary', utama); saveDB('naufal_sampah', sampah);
+            closeModal('modal-confirm'); toggleModePilih(false); render();
         }
 
         function render() {
             const box = document.getElementById('gallery-list');
-            const db = JSON.parse(localStorage.getItem('naufal_cloudinary')) || [];
-            if(db.length === 0) { box.innerHTML = "<p style='text-align:center; color:#999; margin-top:50px;'>Belum ada kenangan.</p>"; return; }
+            const db = currentMode === 'utama' ? getDB('naufal_cloudinary') : getDB('naufal_sampah');
+            if(db.length === 0) { box.innerHTML = `<p style="text-align:center; color:#999; margin-top:50px;">Kosong</p>`; return; }
             box.innerHTML = db.map(m => `
                 <div class="moment-card">
                     <input type="checkbox" class="check-box" value="${m.id}">
-                    ${m.type === 'video' ? `<video controls src="${m.path}"></video>` : `<img src="${m.path}" loading="lazy">`}
+                    ${m.type === 'video' ? `<video src="${m.path}" onclick="openPreview('${m.path}', 'video')"></video>` : `<img src="${m.path}" onclick="openPreview('${m.path}', 'image')" loading="lazy">`}
                     <div class="moment-body">
-                        <small style="color:#aaa;">${m.date}</small>
-                        <div style="font-weight:bold;">${m.title}</div>
-                        <p style="font-size:0.85rem; color:#666; margin:0;">${m.desc}</p>
+                        <small style="color:#aaa; font-weight:bold;">${m.date}</small>
+                        <div style="font-weight:bold; margin-top:2px;">${m.title}</div>
+                        <p style="font-size:0.8rem; color:#666; margin:0;">${m.desc}</p>
                     </div>
                 </div>
             `).join('');
         }
 
-        function showWarning(t) { document.getElementById('warning-text').innerText = t; document.getElementById('modal-warning').style.display = 'flex'; }
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        async function initGPS() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(async (pos) => {
+                    try {
+                        const resL = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`);
+                        const dL = await resL.json();
+                        document.getElementById('loc-widget').innerText = `📍 ${dL.address.city || dL.address.village || "Aktif"}`;
+                        const resW = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${pos.coords.latitude}&longitude=${pos.coords.longitude}&current=temperature_2m,is_day&timezone=auto`);
+                        const dW = await resW.json();
+                        document.getElementById('weather-widget').innerText = `${dW.current.is_day?"☀️":"🌙"} ${Math.round(dW.current.temperature_2m)}°C`;
+                    } catch(e) {}
+                });
+            }
+        }
+
+        function showWarning(t) { document.getElementById('warning-text').innerText=t; document.getElementById('modal-warning').style.display='flex'; }
+        function closeModal(id) { document.getElementById(id).style.display='none'; }
+        
+        function closeModalAfterUpload() { 
+            closeModal('modal-success');
+            document.getElementById('upload-container').style.display = 'none';
+            document.getElementById('progress-fill').style.width = '0%';
+            document.getElementById('inp-title').value = '';
+            document.getElementById('inp-desc').value = '';
+            document.getElementById('inp-file').value = '';
+            document.getElementById('inp-url').value = '';
+        }
+        
+        function goHome() { 
+            document.getElementById('app').style.display = 'none';
+            document.getElementById('btn-back').style.display = 'none';
+            document.getElementById('landing').style.display = 'flex';
+        }
         
         setInterval(() => document.getElementById('clock-widget').innerText = new Date().toLocaleTimeString('id-ID'), 1000);
-        initGPS();
     </script>
 </body>
 </html>
