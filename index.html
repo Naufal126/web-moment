@@ -102,7 +102,7 @@
     <div id="landing">
         <h1>Penyimpanan Kenangan By Naufal ✨</h1>
         <button class="btn-enter" onclick="startApp()">Masuk Galeri</button>
-        <a href="https://www.naufal.fun" target="_blank" style="color:white; margin-top:15px; font-size:0.8rem;">naufal.fun</a>
+        <a href="https://www.naufal.fun" target="_blank" style="color:white; margin-top:15px; font-size:0.8rem;">Website developer</a>
     </div>
 
     <div id="app">
@@ -315,11 +315,39 @@
             document.getElementById('inp-url').value = '';
         }
         
-        function goHome() { 
-            document.getElementById('app').style.display = 'none';
-            document.getElementById('btn-back').style.display = 'none';
-            document.getElementById('landing').style.display = 'flex';
+        function updateMusicUI() {
+            const disc = document.getElementById('music-disc');
+            const icon = document.getElementById('music-icon');
+            if (disc && icon) {
+                if (!audio.paused) {
+                    disc.classList.add('playing');
+                    icon.className = "fa-solid fa-pause";
+                } else {
+                    disc.classList.remove('playing');
+                    icon.className = "fa-solid fa-play";
+                }
+            }
         }
+        
+        function goHome() { 
+    // 1. Sembunyikan aplikasi, tampilkan landing
+    document.getElementById('app').style.display = 'none';
+    document.getElementById('btn-back').style.display = 'none';
+    document.getElementById('landing').style.display = 'flex';
+    
+    // 2. Tambahkan ini agar musik mati saat balik ke home
+    audio.pause(); 
+    updateMusicUI(); // Agar ikon piringan hitam & play/pause berubah
+}
+
+document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+        audio.pause();
+        updateMusicUI();
+    }
+});
+
+
         
         setInterval(() => document.getElementById('clock-widget').innerText = new Date().toLocaleTimeString('id-ID'), 1000);
     </script>
