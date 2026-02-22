@@ -77,7 +77,7 @@
 </head>
 <body>
 
-    <audio id="bg-music" loop src="https://file.garden/aZnYook33hMet4d7/kota%20ini%20tak%20sama%20tanpamu%20-%20Nadhif%20Basalamah%20_%20Lirik%20Lagu.mp3"></audio>
+    <audio id="bg-music"></audio>
 
     <div id="btn-back" class="btn-back-home" onclick="goHome()"><i class="fa-solid fa-house"></i></div>
 
@@ -128,10 +128,27 @@
 
             <div id="view-gallery" class="hidden">
                 <div class="card music-card">
-                    <div class="disc-wrapper"><div id="music-disc" class="disc">💿</div></div>
-                    <div class="music-info"><p class="song-title">Kota Ini Tak Sama Tanpamu</p><p class="song-artist">Nadhif Basalamah</p></div>
-                    <button class="btn-play" onclick="toggleMusic()"><i id="music-icon" class="fa-solid fa-pause"></i></button>
-                </div>
+    <div class="disc-wrapper">
+        <div id="music-disc" class="disc">💿</div>
+    </div>
+
+    <div class="music-info">
+        <p class="song-title" id="song-title">Kota Ini Tak Sama Tanpamu</p>
+        <p class="song-artist" id="song-artist">Nadhif Basalamah</p>
+    </div>
+
+    <div style="display:flex; gap:6px;">
+        <button class="btn-play" onclick="prevSong()">
+            <i class="fa-solid fa-backward"></i>
+        </button>
+        <button class="btn-play" onclick="toggleMusic()">
+            <i id="music-icon" class="fa-solid fa-pause"></i>
+        </button>
+        <button class="btn-play" onclick="nextSong()">
+            <i class="fa-solid fa-forward"></i>
+        </button>
+    </div>
+</div>
                 <div class="gallery-header">
                     <h2 id="gallery-title" style="margin:0;">Galeri</h2>
                     <div class="action-group">
@@ -172,13 +189,17 @@
         function saveDB(n, d) { localStorage.setItem(n, JSON.stringify(d)); }
 
         function startApp() { 
-            document.getElementById('landing').style.display='none'; 
-            document.getElementById('app').style.display='block'; 
-            document.getElementById('btn-back').style.display='flex'; 
-            audio.play().catch(e=>{}); 
-            render(); initGPS(); 
-            document.getElementById('music-disc').classList.add('playing');
-        }
+    document.getElementById('landing').style.display='none'; 
+    document.getElementById('app').style.display='block'; 
+    document.getElementById('btn-back').style.display='flex'; 
+    
+    loadSong(currentSongIndex);
+    audio.play().catch(e=>{});
+    updateMusicUI();
+
+    render(); 
+    initGPS(); 
+}
         
         function toggleMusic() {
             const disc = document.getElementById('music-disc'), icon = document.getElementById('music-icon');
@@ -203,6 +224,37 @@
             document.getElementById('nav-gallery').classList.toggle('active', t==='gallery');
             if(t==='gallery') render();
         }
+        
+     function ambilSelectedIds() {
+    const checkboxes = document.querySelectorAll('.check-box:checked');
+    selectedIds = Array.from(checkboxes).map(cb => Number(cb.value));
+}  
+        
+        function konfirmasiHapus() {
+    ambilSelectedIds();
+    if (selectedIds.length === 0) {
+        return showWarning("Pilih minimal 1 momen!");
+    }
+
+    document.getElementById('confirm-title').innerText = 
+        currentMode === 'utama' ? "Pindahkan ke Sampah?" : "Hapus Permanen?";
+
+    document.getElementById('btn-confirm-action').innerText = 
+        currentMode === 'utama' ? "PINDAHKAN" : "HAPUS";
+
+    document.getElementById('modal-confirm').style.display = 'flex';
+}
+
+function konfirmasiPulihkan() {
+    ambilSelectedIds();
+    if (selectedIds.length === 0) {
+        return showWarning("Pilih minimal 1 momen!");
+    }
+
+    document.getElementById('confirm-title').innerText = "Pulihkan ke Galeri?";
+    document.getElementById('btn-confirm-action').innerText = "PULIHKAN";
+    document.getElementById('modal-confirm').style.display = 'flex';
+}
 
         function switchGalleryView() {
             currentMode = (currentMode === 'utama') ? 'sampah' : 'utama';
@@ -230,7 +282,7 @@
 
         function uploadHandler() {
             const title = document.getElementById('inp-title').value;
-            if(!title) return showWarning("Isi judul!");
+            if(!title) return showWarning("ISI DULU FORM NYA!");
             const source = (uploadType==='file') ? document.getElementById('inp-file').files[0] : document.getElementById('inp-url').value;
             if(!source) return showWarning("Pilih file/link!");
             
@@ -347,6 +399,52 @@ document.addEventListener("visibilitychange", () => {
     }
 });
 
+function loadSong(index) {
+    const song = playlist[index];
+    audio.src = song.src;
+    document.getElementById("song-title").innerText = song.title;
+    document.getElementById("song-artist").innerText = song.artist;
+}
+
+function nextSong() {
+    currentSongIndex++;
+    if (currentSongIndex >= playlist.length) {
+        currentSongIndex = 0;
+    }
+    loadSong(currentSongIndex);
+    audio.play();
+    updateMusicUI();
+}
+
+function prevSong() {
+    currentSongIndex--;
+    if (currentSongIndex < 0) {
+        currentSongIndex = playlist.length - 1;
+    }
+    loadSong(currentSongIndex);
+    audio.play();
+    updateMusicUI();
+}
+
+const playlist = [
+    {
+        title: "Kota Ini Tak Sama Tanpamu",
+        artist: "Nadhif Basalamah",
+        src: "https://file.garden/aZnYook33hMet4d7/kota%20ini%20tak%20sama%20tanpamu%20-%20Nadhif%20Basalamah%20_%20Lirik%20Lagu.mp3"
+    },
+    {
+        title: "Sedia Aku sebelum Hujan",
+        artist: "Idgitaf",
+        src: "https://file.garden/aZnYook33hMet4d7/Idgitaf%20-%20Sedia%20Aku%20Sebelum%20Hujan%20Official%20Lyric%20Video.mp3"
+    },
+    {
+        title: "Bergema selamanya",
+        artist: "Nadhif Basalamah",
+        src: "https://file.garden/aZnYook33hMet4d7/Nadhif%20Basalamah%20-%20bergema%20sampai%20selamanya%20Official%20Music%20Video.mp3"
+    }
+];
+
+let currentSongIndex = 0;
 
         
         setInterval(() => document.getElementById('clock-widget').innerText = new Date().toLocaleTimeString('id-ID'), 1000);
