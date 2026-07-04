@@ -41,9 +41,11 @@
             max-width: 320px; 
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); 
             text-align: center; 
-            box-sizing: border-box; 
-            color: white;
         }
+        
+        /* Perbaikan Form Email Biar Tidak Keluar Kotak */
+        .login-card *, .login-card *::before, .login-card *::after { box-sizing: border-box; }
+        
         .login-card h2, .login-card p { color: white !important; }
         .login-card p { opacity: 0.8; }
         
@@ -54,19 +56,33 @@
             font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; 
             gap: 10px; font-size: 0.9rem; transition: 0.3s; color: #333; 
         }
-        .btn-login-opt:hover { background: rgba(255, 255, 255, 1); }
+        .btn-login-opt:hover { background: rgba(255, 255, 255, 1); transform: translateY(-2px); }
+        
+        .input-group { position: relative; width: 100%; margin-bottom: 12px; }
+        .input-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; pointer-events: none; }
         
         .auth-input { 
-            width: 100%; padding: 12px 14px; margin-bottom: 12px; 
+            width: 100%; padding: 12px 14px; 
             border: 1px solid rgba(255, 255, 255, 0.3); 
             border-radius: 12px; background: rgba(255, 255, 255, 0.2);
             color: white; font-size: 0.9rem; outline: none; backdrop-filter: blur(5px);
+            transition: 0.3s;
         }
         .auth-input::placeholder { color: rgba(255, 255, 255, 0.7); }
+        .auth-input:focus { background: rgba(255, 255, 255, 0.35); border-color: rgba(255, 255, 255, 0.7); }
+        .auth-input.with-icon { padding-left: 42px !important; } 
         
-        .auth-btn-group { display: flex; gap: 10px; margin-bottom: 5px; }
-        .btn-auth { flex: 1; padding: 12px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: #333; font-size: 0.9rem; background: rgba(255,255,255,0.9); }
-        .btn-back-opt { background: none; border: none; color: white; opacity: 0.8; font-size: 0.8rem; margin-top: 15px; cursor: pointer; font-weight: bold; display: inline-flex; align-items: center; gap: 5px; }
+        .forgot-link { display: block; text-align: right; color: white; font-size: 0.75rem; text-decoration: none; opacity: 0.8; margin-top: -4px; margin-bottom: 18px; transition: 0.3s; }
+        .forgot-link:hover { opacity: 1; text-decoration: underline; }
+
+        .btn-auth { width: 100%; padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 0.9rem; transition: 0.3s; }
+        .btn-auth.primary { background: rgba(255,255,255,0.9); color: #333; border: none; margin-bottom: 10px; }
+        .btn-auth.primary:hover { background: #fff; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .btn-auth.secondary { background: transparent; color: white; border: 1px solid rgba(255,255,255,0.5); }
+        .btn-auth.secondary:hover { background: rgba(255,255,255,0.15); }
+        
+        .btn-back-opt { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 8px 18px; border-radius: 20px; color: white; opacity: 0.9; font-size: 0.75rem; margin-top: 15px; cursor: pointer; font-weight: bold; display: inline-flex; align-items: center; justify-content: center; gap: 6px; transition: 0.3s; }
+        .btn-back-opt:hover { background: rgba(255,255,255,0.25); transform: translateX(-3px); }
 
         /* App Main */ 
         #app { display: none; padding-top: 80px; padding-bottom: 140px; min-height: 100vh; } 
@@ -158,18 +174,38 @@
                 </button>
             </div>
 
+            <!-- Form Email Estetik -->
             <div id="email-form-box" class="hidden">
-                <input type="email" id="inp-email" class="auth-input" placeholder="Email kamu...">
-                <input type="password" id="inp-password" class="auth-input" placeholder="Password...">
-                
-                <div class="auth-btn-group">
-                    <button class="btn-auth" onclick="loginWithEmail()">Login</button>
-                    <button class="btn-auth" onclick="registerWithEmail()">Daftar</button>
+                <div class="input-group">
+                    <i class="fa-solid fa-envelope input-icon"></i>
+                    <input type="email" id="inp-email" class="auth-input with-icon" placeholder="Email kamu...">
                 </div>
                 
-                <button class="btn-back-opt" onclick="showLoginOptions()">
-                    <i class="fa-solid fa-arrow-left"></i> Kembali
-                </button>
+                <div class="input-group" style="margin-bottom: 10px;">
+                    <i class="fa-solid fa-lock input-icon"></i>
+                    <input type="password" id="inp-password" class="auth-input with-icon" placeholder="Password...">
+                </div>
+                
+                <a href="#" onclick="mintaResetPassword(event)" class="forgot-link">Lupa password?</a>
+                
+                <button class="btn-auth primary" onclick="loginWithEmail()">Masuk</button>
+                <button class="btn-auth secondary" onclick="registerWithEmail()">Daftar Akun Baru</button>
+                
+                <div style="text-align: center;">
+                    <button class="btn-back-opt" onclick="showLoginOptions()">
+                        <i class="fa-solid fa-arrow-left"></i> Kembali
+                    </button>
+                </div>
+            </div>
+
+            <!-- Form Pengetikan Password Baru (Muncul Saat Klik Link Email) -->
+            <div id="reset-password-box" class="hidden">
+                <p style="font-size: 0.85rem; margin-bottom: 15px; color: #fff;">Ketik password baru kamu:</p>
+                <div class="input-group">
+                    <i class="fa-solid fa-key input-icon"></i>
+                    <input type="password" id="inp-new-password" class="auth-input with-icon" placeholder="Password baru...">
+                </div>
+                <button class="btn-action" id="btn-save-new-pass" style="margin-top: 0; padding: 12px; border-radius: 12px;">Simpan Password</button>
             </div>
             
             <a href="https://www.naufal.fun" target="_blank" style="display: block; margin-top: 25px; font-size: 0.75rem; color: rgba(255,255,255,0.6); text-decoration: none;">Website developer</a> 
@@ -247,18 +283,18 @@
     <!-- LOGIKA JAVASCRIPT & FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, confirmPasswordReset } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, query, where, getDocs, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
-  apiKey: "AIzaSyAq0X59Cg4vtAibaloA8Ys8vGfIg-E79Z0",
-  authDomain: "web-moment.firebaseapp.com",
-  projectId: "web-moment",
-  storageBucket: "web-moment.firebasestorage.app",
-  messagingSenderId: "928375736608",
-  appId: "1:928375736608:web:961622651ec2a86fc0af45",
-  measurementId: "G-X5P9T5DZ5V"
-};
+            apiKey: "AIzaSyAq0X59Cg4vtAibaloA8Ys8vGfIg-E79Z0",
+            authDomain: "web-moment.firebaseapp.com",
+            projectId: "web-moment",
+            storageBucket: "web-moment.firebasestorage.app",
+            messagingSenderId: "928375736608",
+            appId: "1:928375736608:web:961622651ec2a86fc0af45",
+            measurementId: "G-X5P9T5DZ5V"
+        };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -273,11 +309,13 @@
         window.showEmailForm = () => {
             document.getElementById('login-options').classList.add('hidden');
             document.getElementById('email-form-box').classList.remove('hidden');
+            document.getElementById('reset-password-box').classList.add('hidden');
         };
 
         window.showLoginOptions = () => {
             document.getElementById('email-form-box').classList.add('hidden');
             document.getElementById('login-options').classList.remove('hidden');
+            document.getElementById('reset-password-box').classList.add('hidden');
         };
 
         window.loginWithGoogle = () => {
@@ -297,8 +335,17 @@
             const pass = document.getElementById('inp-password').value;
             if(!email || !pass) return window.showWarning("Email dan Password harus diisi untuk mendaftar!");
             if(pass.length < 6) return window.showWarning("Password minimal 6 karakter!");
+            
             createUserWithEmailAndPassword(auth, email, pass)
-                .then(() => alert("Berhasil mendaftar akun baru!"))
+                .then(() => {
+                    document.getElementById('modal-success').querySelector('.modal-content').innerHTML = `
+                        <div style="font-size:50px;">✨</div>
+                        <h3>Berhasil!</h3>
+                        <p style="font-size:0.8rem; color:#666; margin-bottom:15px;">Berhasil mendaftar akun baru! Silakan login.</p>
+                        <button class="btn-modal" onclick="closeModal('modal-success')">OKE</button>
+                    `;
+                    document.getElementById('modal-success').style.display='flex';
+                })
                 .catch(err => window.showWarning("Gagal Mendaftar: " + err.message));
         };
 
@@ -315,6 +362,65 @@
             });
         };
 
+        // Fungsi Meminta Link Reset Password (Estetik)
+        window.mintaResetPassword = (event) => {
+            event.preventDefault();
+            const email = document.getElementById('inp-email').value;
+            if(!email) return window.showWarning("Ketik email kamu dulu di kolom input!");
+
+            sendPasswordResetEmail(auth, email)
+                .then(() => {
+                    document.getElementById('modal-success').querySelector('.modal-content').innerHTML = `
+                        <div style="font-size:50px;">✉️</div>
+                        <h3>Email Terkirim!</h3>
+                        <p style="font-size:0.8rem; color:#666; margin-bottom:15px;">Link reset password sudah dikirim. Silakan cek inbox atau folder spam.</p>
+                        <button class="btn-modal" onclick="location.reload()">OKE</button>
+                    `;
+                    document.getElementById('modal-success').style.display = 'flex';
+                })
+                .catch(err => {
+                    let pesanError = "Gagal mengirim email: " + err.message;
+                    if(err.code === 'auth/user-not-found') pesanError = "Email tersebut belum terdaftar!";
+                    if(err.code === 'auth/invalid-email') pesanError = "Format email yang kamu masukkan salah!";
+                    window.showWarning(pesanError);
+                });
+        };
+
+        // Fungsi Otomatis Mengecek Token Akses dari Link Email (Estetik)
+        const cekParameterUrl = () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const mode = urlParams.get('mode');
+            const oobCode = urlParams.get('oobCode');
+
+            if (mode === 'resetPassword' && oobCode) {
+                document.getElementById('login-options').classList.add('hidden');
+                document.getElementById('email-form-box').classList.add('hidden');
+                document.getElementById('reset-password-box').classList.remove('hidden');
+
+                document.getElementById('btn-save-new-pass').onclick = () => {
+                    const newPassword = document.getElementById('inp-new-password').value;
+                    if (newPassword.length < 6) return window.showWarning("Password minimal 6 karakter!");
+
+                    confirmPasswordReset(auth, oobCode, newPassword)
+                        .then(() => {
+                            document.getElementById('modal-success').querySelector('.modal-content').innerHTML = `
+                                <div style="font-size:50px;">🎉</div>
+                                <h3>Password Diganti!</h3>
+                                <p style="font-size:0.8rem; color:#666; margin-bottom:15px;">Password barumu berhasil disimpan. Silakan masuk kembali.</p>
+                                <button class="btn-modal" onclick="window.location.href = window.location.pathname">LOGIN</button>
+                            `;
+                            document.getElementById('modal-success').style.display = 'flex';
+                        })
+                        .catch(err => {
+                            window.showWarning("Link kedaluwarsa atau sudah pernah digunakan. Silakan minta link baru.");
+                        });
+                };
+            }
+        };
+
+        // Jalankan pengecekan token URL saat web dimuat
+        cekParameterUrl();
+
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
@@ -330,9 +436,6 @@
             }
         });
 
-        // ==========================================
-        // KODE YANG DIPERBAIKI ADA DI SINI KE BAWAH
-        // ==========================================
         window.uploadHandler = () => {
             if(!currentUser) return window.showWarning("Login dulu!");
             const title = document.getElementById('inp-title').value;
@@ -340,7 +443,6 @@
             const source = (uploadType==='file') ? document.getElementById('inp-file').files[0] : document.getElementById('inp-url').value;
             if(!source) return window.showWarning("Pilih file/link!");
             
-            // Tampilkan bar loading dan pastikan mulai dari 0%
             document.getElementById('upload-container').style.display='block';
             document.getElementById('progress-fill').style.width = '0%';
             document.getElementById('status-text').innerText = `Proses: 0%`;
@@ -360,11 +462,9 @@
             
             xhr.onload = async () => {
                 const d = JSON.parse(xhr.responseText);
-                
-                // Pengecekan error Cloudinary (Mencegah loading muter terus)
                 if (xhr.status !== 200) {
                     window.showWarning("Gagal upload gambar: " + (d.error?.message || "Kesalahan pada pengaturan Cloudinary"));
-                    document.getElementById('upload-container').style.display = 'none'; // Sembunyikan loading
+                    document.getElementById('upload-container').style.display = 'none';
                     return;
                 }
 
@@ -380,25 +480,28 @@
                         status: 'utama',
                         timestamp: Date.now()
                     });
+                    
+                    // Kembalikan isi modal sukses untuk fungsi upload
+                    document.getElementById('modal-success').querySelector('.modal-content').innerHTML = `
+                        <div style="font-size:50px;">✨</div>
+                        <h3>Berhasil!</h3>
+                        <button class="btn-modal" onclick="closeModalAfterUpload()">OKE!</button>
+                    `;
                     document.getElementById('modal-success').style.display='flex';
                     window.render();
                 } catch(e) {
                     window.showWarning("Gagal simpan ke database Firebase!");
-                    document.getElementById('upload-container').style.display = 'none'; // Sembunyikan loading
+                    document.getElementById('upload-container').style.display = 'none';
                 }
             };
 
-            // Pengecekan error jaringan/internet terputus
             xhr.onerror = () => {
                 window.showWarning("Terjadi kesalahan jaringan! Coba cek koneksi internetmu.");
-                document.getElementById('upload-container').style.display = 'none'; // Sembunyikan loading
+                document.getElementById('upload-container').style.display = 'none';
             };
 
             xhr.send(fd);
         };
-        // ==========================================
-        // BATAS KODE YANG DIPERBAIKI
-        // ==========================================
 
         window.render = async () => {
             if(!currentUser) return;
