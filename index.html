@@ -3,6 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="description" content="Penyimpanan Kenangan by Naufal. Simpan momen berharga, foto, dan video kamu dengan aman dan estetik.">
+    <meta name="keywords" content="penyimpanan kenangan, galeri foto, memori, naufal, web galeri estetik">
+    <meta name="author" content="Naufal">
+    <meta name="robots" content="index, follow"> 
+
+    <meta property="og:title" content="Penyimpanan Kenangan - Naufal">
+    <meta property="og:description" content="Simpan momen berharga kamu dengan aman dan estetik.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1200&auto=format&fit=crop">
+    <meta property="og:url" content="https://www.naufal.fun">
+    
     <title>Penyimpanan Kenangan - Naufal</title>
     
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>">
@@ -45,7 +56,6 @@
             text-align: center; 
         }
         
-        /* Perbaikan Form Email Biar Tidak Keluar Kotak */
         .login-card *, .login-card *::before, .login-card *::after { box-sizing: border-box; }
         
         .login-card h2, .login-card p { color: white !important; }
@@ -129,6 +139,9 @@
         .tab-upload { display: flex; background: #f0f0f0; border-radius: 12px; padding: 4px; margin-bottom: 15px; } 
         .tab-btn { flex: 1; border: none; background: none; padding: 8px; font-size: 0.75rem; font-weight: bold; cursor: pointer; border-radius: 10px; color: #888; } 
         .tab-btn.active { background: white; color: var(--primary); }
+
+        /* Gaya Khusus Area Konten Hasil AI di dalam Modal */
+        .ai-content-box { background: #f9f7f9; border: 1px dashed var(--primary); padding: 15px; border-radius: 15px; margin: 15px 0; text-align: left; font-size: 0.85rem; color: #444; line-height: 1.5; font-style: italic; white-space: pre-wrap; max-height: 180px; overflow-y: auto; }
     </style>
 </head>
 <body>
@@ -157,6 +170,19 @@
             <button class="btn-modal" style="background:#eee; color:#333;" onclick="closeModal('modal-confirm')">BATAL</button> 
         </div> 
     </div> 
+
+    <div id="modal-ai-result" class="modal-overlay">
+        <div class="modal-content" style="max-width: 360px;">
+            <div style="font-size:40px;">🤖</div>
+            <h3 style="margin: 5px 0;">Rekomendasi Cerita AI</h3>
+            <div id="ai-popup-text" class="ai-content-box"></div>
+            <button class="btn-modal" onclick="gunakanTeksAI()">GUNAKAN TEKS</button>
+            <button id="btn-ai-retry" class="btn-modal" style="background: #e2dee3; color: #4a3f4b; margin-top: 8px;" onclick="mintaBantuanAI(true)">
+                <i class="fa-solid fa-arrows-rotate"></i> COBA LAGI (CARI AI LAI)
+            </button>
+            <button class="btn-modal" style="background: #eee; color: #333; margin-top: 8px;" onclick="closeModal('modal-ai-result')">BATAL</button>
+        </div>
+    </div>
     
     <div id="landing"> 
         <div class="login-card">
@@ -224,6 +250,14 @@
                     <div id="group-url" class="hidden"><input type="text" id="inp-url" placeholder="Paste link video/foto..."></div> 
                     <input type="text" id="inp-title" placeholder="Judul momen..."> 
                     <textarea id="inp-desc" rows="3" placeholder="Cerita momen ini..."></textarea> 
+                    
+                    <button id="btn-ai-caption" type="button" class="btn-action" style="background: #333; margin-top: 0px; padding: 10px; font-size: 0.8rem; border-radius: 12px;" onclick="mintaBantuanAI(false)">
+                        ✨ Bantu Tulis (AI)
+                    </button>
+                    <p id="ai-loading" class="hidden" style="font-size: 0.75rem; text-align: center; color: var(--primary); margin-top: 8px; font-weight: bold;">
+                        🤖 AI sedang merangkai kata...
+                    </p>
+
                     <button id="btn-save" class="btn-action" onclick="uploadHandler()">SIMPAN</button> 
                     <div id="upload-container"> 
                         <div id="status-text" style="font-size:0.75rem; font-weight:bold;">Proses: 0%</div> 
@@ -297,9 +331,11 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        
         const provider = new GoogleAuthProvider();
+        provider.setCustomParameters({ prompt: 'select_account' });
+        
         let currentUser = null;
-
         const CONFIG = { cloudName: "dtpugpvm1", uploadPreset: "momen_naufal" };
         let selectedIds = [], uploadType = 'file', currentMode = 'utama';
         const audio = document.getElementById('bg-music');
@@ -307,13 +343,11 @@
         window.showEmailForm = () => {
             document.getElementById('login-options').classList.add('hidden');
             document.getElementById('email-form-box').classList.remove('hidden');
-            document.getElementById('reset-password-box').classList.add('hidden');
         };
 
         window.showLoginOptions = () => {
             document.getElementById('email-form-box').classList.add('hidden');
             document.getElementById('login-options').classList.remove('hidden');
-            document.getElementById('reset-password-box').classList.add('hidden');
         };
 
         window.loginWithGoogle = () => {
@@ -324,27 +358,16 @@
             const email = document.getElementById('inp-email').value;
             const pass = document.getElementById('inp-password').value;
             if(!email || !pass) return window.showWarning("Email dan Password harus diisi!");
-            signInWithEmailAndPassword(auth, email, pass)
-                .catch(err => window.showWarning("Gagal Login: Cek kembali email dan passwordmu!"));
+            signInWithEmailAndPassword(auth, email, pass).catch(err => window.showWarning("Gagal Login!"));
         };
 
         window.registerWithEmail = () => {
             const email = document.getElementById('inp-email').value;
             const pass = document.getElementById('inp-password').value;
-            if(!email || !pass) return window.showWarning("Email dan Password harus diisi untuk mendaftar!");
-            if(pass.length < 6) return window.showWarning("Password minimal 6 karakter!");
-            
-            createUserWithEmailAndPassword(auth, email, pass)
-                .then(() => {
-                    document.getElementById('modal-success').querySelector('.modal-content').innerHTML = `
-                        <div style="font-size:50px;">✨</div>
-                        <h3>Berhasil!</h3>
-                        <p style="font-size:0.8rem; color:#666; margin-bottom:15px;">Berhasil mendaftar akun baru! Silakan login.</p>
-                        <button class="btn-modal" onclick="closeModal('modal-success')">OKE</button>
-                    `;
-                    document.getElementById('modal-success').style.display='flex';
-                })
-                .catch(err => window.showWarning("Gagal Mendaftar: " + err.message));
+            if(!email || !pass) return window.showWarning("Form harus diisi!");
+            createUserWithEmailAndPassword(auth, email, pass).then(() => {
+                window.showWarning("Pendaftaran Berhasil! Silakan Login.");
+            }).catch(err => window.showWarning("Gagal mendaftar."));
         };
 
         window.logoutApp = () => {
@@ -352,72 +375,9 @@
                 document.getElementById('app').style.display = 'none';
                 document.getElementById('btn-back').style.display = 'none';
                 document.getElementById('landing').style.display = 'flex';
-                window.showLoginOptions();
-                document.getElementById('inp-email').value = '';
-                document.getElementById('inp-password').value = '';
                 audio.pause();
-                window.updateMusicUI();
             });
         };
-
-        // Fungsi Meminta Link Reset Password (Estetik)
-        window.mintaResetPassword = (event) => {
-            event.preventDefault();
-            const email = document.getElementById('inp-email').value;
-            if(!email) return window.showWarning("Ketik email kamu dulu di kolom input!");
-
-            sendPasswordResetEmail(auth, email)
-                .then(() => {
-                    document.getElementById('modal-success').querySelector('.modal-content').innerHTML = `
-                        <div style="font-size:50px;">✉️</div>
-                        <h3>Email Terkirim!</h3>
-                        <p style="font-size:0.8rem; color:#666; margin-bottom:15px;">Link reset password sudah dikirim. Silakan cek inbox atau folder spam.</p>
-                        <button class="btn-modal" onclick="location.reload()">OKE</button>
-                    `;
-                    document.getElementById('modal-success').style.display = 'flex';
-                })
-                .catch(err => {
-                    let pesanError = "Gagal mengirim email: " + err.message;
-                    if(err.code === 'auth/user-not-found') pesanError = "Email tersebut belum terdaftar!";
-                    if(err.code === 'auth/invalid-email') pesanError = "Format email yang kamu masukkan salah!";
-                    window.showWarning(pesanError);
-                });
-        };
-
-        // Fungsi Otomatis Mengecek Token Akses dari Link Email (Estetik)
-        const cekParameterUrl = () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const mode = urlParams.get('mode');
-            const oobCode = urlParams.get('oobCode');
-
-            if (mode === 'resetPassword' && oobCode) {
-                document.getElementById('login-options').classList.add('hidden');
-                document.getElementById('email-form-box').classList.add('hidden');
-                document.getElementById('reset-password-box').classList.remove('hidden');
-
-                document.getElementById('btn-save-new-pass').onclick = () => {
-                    const newPassword = document.getElementById('inp-new-password').value;
-                    if (newPassword.length < 6) return window.showWarning("Password minimal 6 karakter!");
-
-                    confirmPasswordReset(auth, oobCode, newPassword)
-                        .then(() => {
-                            document.getElementById('modal-success').querySelector('.modal-content').innerHTML = `
-                                <div style="font-size:50px;">🎉</div>
-                                <h3>Password Diganti!</h3>
-                                <p style="font-size:0.8rem; color:#666; margin-bottom:15px;">Password barumu berhasil disimpan. Silakan masuk kembali.</p>
-                                <button class="btn-modal" onclick="window.location.href = window.location.pathname">LOGIN</button>
-                            `;
-                            document.getElementById('modal-success').style.display = 'flex';
-                        })
-                        .catch(err => {
-                            window.showWarning("Link kedaluwarsa atau sudah pernah digunakan. Silakan minta link baru.");
-                        });
-                };
-            }
-        };
-
-        // Jalankan pengecekan token URL saat web dimuat
-        cekParameterUrl();
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -429,10 +389,93 @@
                 window.updateMusicUI();
                 window.render();
                 window.initGPS();
-            } else {
-                currentUser = null;
             }
         });
+
+        // ==========================================
+        // UPDATE FUNGSI AI CAPTION MAKER + RETRY
+        // ==========================================
+        window.fileKeBase64 = (file) => {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = error => reject(error);
+            });
+        };
+
+        window.mintaBantuanAI = async (isRetry = false) => {
+            const fileInput = document.getElementById('inp-file');
+            const loadingText = document.getElementById('ai-loading');
+            const aiPopupText = document.getElementById('ai-popup-text');
+            const modalAI = document.getElementById('modal-ai-result');
+            const retryBtn = document.getElementById('btn-ai-retry');
+            
+            if (uploadType !== 'file' || !fileInput.files.length) {
+                return window.showWarning("Pilih foto di tab FILE dulu ya sebelum minta tolong AI! 😉");
+            }
+
+            const file = fileInput.files[0];
+            if (!file.type.startsWith('image/')) {
+                return window.showWarning("Saat ini AI hanya bisa membaca foto!");
+            }
+
+            // Ubah tampilan loading text & matikan tombol retry sementara pas proses re-generate
+            if(isRetry) {
+                retryBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Mencari Lain...`;
+                retryBtn.disabled = true;
+            } else {
+                loadingText.classList.remove('hidden');
+            }
+
+            const apiKey = "AQ.Ab8RN6I-E0apfAtE88XNqD8lLYfnG8Lix-VVxJqsnCmxfTWIgg"; 
+            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`;
+
+
+            try {
+                const base64Image = await window.fileKeBase64(file);
+                const mimeType = file.type;
+
+                const requestBody = {
+                    contents: [{
+                        parts: [
+                            { text: "Buatkan caption singkat yang estetik, puitis, atau lucu dalam bahasa Indonesia untuk foto ini. Jangan pakai hashtag. Tulis langsung hasilnya saja tanpa kalimat pembuka seperti 'Berikut adalah...'." },
+                            { inlineData: { mimeType: mimeType, data: base64Image } }
+                        ]
+                    }]
+                };
+
+                const respons = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestBody)
+                });
+
+                const data = await respons.json();
+                if (data.error) throw new Error(data.error.message);
+
+                const teksAI = data.candidates[0].content.parts[0].text;
+                aiPopupText.innerText = teksAI;
+                
+                // Munculkan popup jika dipanggil dari form utama
+                if(!isRetry) modalAI.style.display = 'flex';
+
+            } catch (error) {
+                console.error(error);
+                window.showWarning("Gagal memuat caption dari AI.");
+            } finally {
+                loadingText.classList.add('hidden');
+                retryBtn.innerHTML = `<i class="fa-solid fa-arrows-rotate"></i> COBA LAGI (CARI AI LAI)`;
+                retryBtn.disabled = false;
+            }
+        };
+
+        window.gunakanTeksAI = () => {
+            const teksAI = document.getElementById('ai-popup-text').innerText;
+            document.getElementById('inp-desc').value = teksAI;
+            window.closeModal('modal-ai-result');
+        };
+        // ==========================================
 
         window.uploadHandler = () => {
             if(!currentUser) return window.showWarning("Login dulu!");
@@ -442,8 +485,6 @@
             if(!source) return window.showWarning("Pilih file/link!");
             
             document.getElementById('upload-container').style.display='block';
-            document.getElementById('progress-fill').style.width = '0%';
-            document.getElementById('status-text').innerText = `Proses: 0%`;
 
             const fd = new FormData();
             fd.append("file", source);
@@ -460,44 +501,22 @@
             
             xhr.onload = async () => {
                 const d = JSON.parse(xhr.responseText);
-                if (xhr.status !== 200) {
-                    window.showWarning("Gagal upload gambar: " + (d.error?.message || "Kesalahan pada pengaturan Cloudinary"));
-                    document.getElementById('upload-container').style.display = 'none';
-                    return;
-                }
-
                 const fmtDate = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-                try {
-                    await addDoc(collection(db, "kenangan"), {
-                        userId: currentUser.uid,
-                        type: d.resource_type,
-                        path: d.secure_url,
-                        title: title,
-                        desc: document.getElementById('inp-desc').value,
-                        date: fmtDate,
-                        status: 'utama',
-                        timestamp: Date.now()
-                    });
-                    
-                    // Kembalikan isi modal sukses untuk fungsi upload
-                    document.getElementById('modal-success').querySelector('.modal-content').innerHTML = `
-                        <div style="font-size:50px;">✨</div>
-                        <h3>Berhasil!</h3>
-                        <button class="btn-modal" onclick="closeModalAfterUpload()">OKE!</button>
-                    `;
-                    document.getElementById('modal-success').style.display='flex';
-                    window.render();
-                } catch(e) {
-                    window.showWarning("Gagal simpan ke database Firebase!");
-                    document.getElementById('upload-container').style.display = 'none';
-                }
+                
+                await addDoc(collection(db, "kenangan"), {
+                    userId: currentUser.uid,
+                    type: d.resource_type,
+                    path: d.secure_url,
+                    title: title,
+                    desc: document.getElementById('inp-desc').value,
+                    date: fmtDate,
+                    status: 'utama',
+                    timestamp: Date.now()
+                });
+                
+                document.getElementById('modal-success').style.display='flex';
+                window.render();
             };
-
-            xhr.onerror = () => {
-                window.showWarning("Terjadi kesalahan jaringan! Coba cek koneksi internetmu.");
-                document.getElementById('upload-container').style.display = 'none';
-            };
-
             xhr.send(fd);
         };
 
@@ -505,42 +524,36 @@
             if(!currentUser) return;
             const box = document.getElementById('gallery-list');
             box.innerHTML = `<p style="text-align:center; color:#999; margin-top:50px;">Memuat data...</p>`;
-            try {
-                const q = query(collection(db, "kenangan"), where("userId", "==", currentUser.uid), where("status", "==", currentMode));
-                const querySnapshot = await getDocs(q);
-                let dbData = [];
-                querySnapshot.forEach((doc) => { dbData.push({ id: doc.id, ...doc.data() }); });
-                dbData.sort((a, b) => b.timestamp - a.timestamp);
-                if(dbData.length === 0) { box.innerHTML = `<p style="text-align:center; color:#999; margin-top:50px;">Kosong</p>`; return; }
-                box.innerHTML = dbData.map(m => `
-                    <div class="moment-card">
-                        <input type="checkbox" class="check-box" value="${m.id}">
-                        ${m.type === 'video' ? `<video src="${m.path}" onclick="openPreview('${m.path}', 'video')"></video>` : `<img src="${m.path}" onclick="openPreview('${m.path}', 'image')" loading="lazy">`}
-                        <div class="moment-body">
-                            <small style="color:#aaa; font-weight:bold;">${m.date}</small>
-                            <div style="font-weight:bold; margin-top:2px;">${m.title}</div>
-                            <p style="font-size:0.8rem; color:#666; margin:0;">${m.desc}</p>
-                        </div>
+            const q = query(collection(db, "kenangan"), where("userId", "==", currentUser.uid), where("status", "==", currentMode));
+            const querySnapshot = await getDocs(q);
+            let dbData = [];
+            querySnapshot.forEach((doc) => { dbData.push({ id: doc.id, ...doc.data() }); });
+            dbData.sort((a, b) => b.timestamp - a.timestamp);
+            if(dbData.length === 0) { box.innerHTML = `<p style="text-align:center; color:#999; margin-top:50px;">Kosong</p>`; return; }
+            box.innerHTML = dbData.map(m => `
+                <div class="moment-card">
+                    <input type="checkbox" class="check-box" value="${m.id}">
+                    ${m.type === 'video' ? `<video src="${m.path}" onclick="openPreview('${m.path}', 'video')"></video>` : `<img src="${m.path}" onclick="openPreview('${m.path}', 'image')">`}
+                    <div class="moment-body">
+                        <small style="color:#aaa; font-weight:bold;">${m.date}</small>
+                        <div style="font-weight:bold; margin-top:2px;">${m.title}</div>
+                        <p style="font-size:0.8rem; color:#666; margin:0;">${m.desc}</p>
                     </div>
-                `).join('');
-            } catch(e) { box.innerHTML = `<p style="text-align:center; color:var(--danger); margin-top:50px;">Error memuat data</p>`; }
+                </div>
+            `).join('');
         };
 
         window.eksekusiHapus = async () => {
             const action = document.getElementById('btn-confirm-action').innerText;
-            try {
-                for(let id of selectedIds) {
-                    const docRef = doc(db, "kenangan", id);
-                    if(action === "PINDAHKAN" || document.getElementById('confirm-title').innerText.includes("Sampah")) {
-                        await updateDoc(docRef, { status: 'sampah' });
-                    } else if(action === "PULIHKAN") {
-                        await updateDoc(docRef, { status: 'utama' });
-                    } else { await deleteDoc(docRef); }
-                }
-                window.closeModal('modal-confirm');
-                window.toggleModePilih(false);
-                window.render();
-            } catch(e) { window.showWarning("Gagal memproses data"); }
+            for(let id of selectedIds) {
+                const docRef = doc(db, "kenangan", id);
+                if(action === "PINDAHKAN") await updateDoc(docRef, { status: 'sampah' });
+                else if(action === "PULIHKAN") await updateDoc(docRef, { status: 'utama' });
+                else await deleteDoc(docRef);
+            }
+            window.closeModal('modal-confirm');
+            window.toggleModePilih(false);
+            window.render();
         };
 
         window.konfirmasiHapus = () => {
@@ -549,15 +562,6 @@
             if (selectedIds.length === 0) return window.showWarning("Pilih minimal 1 momen!");
             document.getElementById('confirm-title').innerText = currentMode === 'utama' ? "Pindahkan ke Sampah?" : "Hapus Permanen?";
             document.getElementById('btn-confirm-action').innerText = currentMode === 'utama' ? "PINDAHKAN" : "HAPUS";
-            document.getElementById('modal-confirm').style.display = 'flex';
-        };
-
-        window.konfirmasiPulihkan = () => {
-            const checkboxes = document.querySelectorAll('.check-box:checked');
-            selectedIds = Array.from(checkboxes).map(cb => cb.value); 
-            if (selectedIds.length === 0) return window.showWarning("Pilih minimal 1 momen!");
-            document.getElementById('confirm-title').innerText = "Pulihkan ke Galeri?";
-            document.getElementById('btn-confirm-action').innerText = "PULIHKAN";
             document.getElementById('modal-confirm').style.display = 'flex';
         };
 
@@ -575,27 +579,21 @@
             document.getElementById('btn-sampah-toggle').classList.toggle('hidden', aktif);
             document.getElementById('btn-batal').classList.toggle('hidden', !aktif);
             document.getElementById('btn-hapus-action').classList.toggle('hidden', !aktif);
-            if(currentMode === 'sampah') document.getElementById('btn-pulihkan-action').classList.toggle('hidden', !aktif);
         };
 
         window.switchUpload = (type) => {
             uploadType = type;
             document.getElementById('group-file').classList.toggle('hidden', type!=='file');
             document.getElementById('group-url').classList.toggle('hidden', type!=='url');
-            document.getElementById('tab-file').classList.toggle('active', type==='file');
-            document.getElementById('tab-url').classList.toggle('active', type==='url');
         };
 
         window.pindahTab = (t) => {
             document.getElementById('view-add').classList.toggle('hidden', t!=='add');
             document.getElementById('view-gallery').classList.toggle('hidden', t!=='gallery');
-            document.getElementById('nav-add').classList.toggle('active', t==='add');
-            document.getElementById('nav-gallery').classList.toggle('active', t==='gallery');
             if(t==='gallery') window.render();
         };
 
         window.openPreview = (path, type) => {
-            if(document.getElementById('gallery-list').classList.contains('select-active')) return;
             document.getElementById('preview-container').innerHTML = (type === 'video') ? `<video id="preview-content" src="${path}" controls autoplay></video>` : `<img id="preview-content" src="${path}">`;
             document.getElementById('preview-modal').style.display = 'flex';
         };
@@ -606,78 +604,39 @@
         window.closeModalAfterUpload = () => {
             window.closeModal('modal-success');
             document.getElementById('upload-container').style.display = 'none';
-            document.getElementById('progress-fill').style.width = '0%';
             document.getElementById('inp-title').value = '';
             document.getElementById('inp-desc').value = '';
             document.getElementById('inp-file').value = '';
-            document.getElementById('inp-url').value = '';
         };
 
         window.initGPS = async () => {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(async (pos) => {
-                    try {
-                        const resL = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`);
-                        const dL = await resL.json();
-                        document.getElementById('loc-widget').innerText = `📍 ${dL.address.city || dL.address.village || "Aktif"}`;
-                        const resW = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${pos.coords.latitude}&longitude=${pos.coords.longitude}&current=temperature_2m,is_day&timezone=auto`);
-                        const dW = await resW.json();
-                        document.getElementById('weather-widget').innerText = `${dW.current.is_day?"☀️":"🌙"} ${Math.round(dW.current.temperature_2m)}°C`;
-                    } catch(e) {}
+                    const resL = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`);
+                    const dL = await resL.json();
+                    document.getElementById('loc-widget').innerText = `📍 ${dL.address.city || dL.address.village || "Aktif"}`;
                 });
             }
         };
 
         window.toggleMusic = () => {
-            const disc = document.getElementById('music-disc'), icon = document.getElementById('music-icon');
-            if (audio.paused) { audio.play(); disc.classList.add('playing'); icon.className = "fa-solid fa-pause"; } 
-            else { audio.pause(); disc.classList.remove('playing'); icon.className = "fa-solid fa-play"; }
+            if (audio.paused) { audio.play(); } else { audio.pause(); }
+            window.updateMusicUI();
         };
 
         window.updateMusicUI = () => {
             const disc = document.getElementById('music-disc'), icon = document.getElementById('music-icon');
-            if (disc && icon) {
-                if (!audio.paused) { disc.classList.add('playing'); icon.className = "fa-solid fa-pause"; } 
-                else { disc.classList.remove('playing'); icon.className = "fa-solid fa-play"; }
-            }
+            if (!audio.paused) { disc.classList.add('playing'); icon.className = "fa-solid fa-pause"; } 
+            else { disc.classList.remove('playing'); icon.className = "fa-solid fa-play"; }
         };
 
         const playlist = [
-            { title: "Kota Ini Tak Sama Tanpamu", artist: "Nadhif Basalamah", src: "https://file.garden/aZnYook33hMet4d7/kota%20ini%20tak%20sama%20tanpamu%20-%20Nadhif%20Basalamah%20_%20Lirik%20Lagu.mp3" },
-            { title: "Sedia Aku sebelum Hujan", artist: "Idgitaf", src: "https://file.garden/aZnYook33hMet4d7/Idgitaf%20-%20Sedia%20Aku%20Sebelum%20Hujan%20Official%20Lyric%20Video.mp3" },
-            { title: "Bergema selamanya", artist: "Nadhif Basalamah", src: "https://file.garden/aZnYook33hMet4d7/Nadhif%20Basalamah%20-%20bergema%20sampai%20selamanya%20Official%20Music%20Video.mp3" },
-            { title: "Natural", artist: "D'MASIV", src : "https://file.garden/aZnYook33hMet4d7/D'MASIV%20-%20Natural%20Official%20Music%20Video.mp3" },
-            { title: "Dia", artist: "Sency & Tenxi", src : "https://file.garden/aZnYook33hMet4d7/Sency%20-%20Dia%2C%20Tenxi%20Lirik.mp3" },
-            { title: "Alamak", artist: "Rizky Febian & Andrian Khalif", src : "https://file.garden/aZnYook33hMet4d7/Rizky%20Febian%20%26%20Adrian%20Khalif%20-%20Alamak%20Official%20Lyric%20Video.mp3" }
+            { title: "Kota Ini Tak Sama Tanpamu", artist: "Nadhif Basalamah", src: "https://file.garden/aZnYook33hMet4d7/kota%20ini%20tak%20sama%20tanpamu%20-%20Nadhif%20Basalamah%20_%20Lirik%20Lagu.mp3" }
         ];
-
         let currentSongIndex = 0;
-        function loadSong(index) {
-            const song = playlist[index];
-            audio.src = song.src;
-            document.getElementById("song-title").innerText = song.title;
-            document.getElementById("song-artist").innerText = song.artist;
-        }
-
-        window.nextSong = () => {
-            currentSongIndex = (currentSongIndex + 1) % playlist.length;
-            loadSong(currentSongIndex);
-            audio.play();
-            window.updateMusicUI();
-        };
-
-        window.prevSong = () => {
-            currentSongIndex = (currentSongIndex - 1 < 0) ? playlist.length - 1 : currentSongIndex - 1;
-            loadSong(currentSongIndex);
-            audio.play();
-            window.updateMusicUI();
-        };
-
-        document.addEventListener("visibilitychange", () => {
-            if (document.hidden) { audio.pause(); window.updateMusicUI(); }
-        });
+        function loadSong(index) { audio.src = playlist[index].src; }
 
         setInterval(() => document.getElementById('clock-widget').innerText = new Date().toLocaleTimeString('id-ID'), 1000);
     </script>
 </body>
-</html>
+                                                                                                                                                                                                                                                                    </html>
