@@ -401,6 +401,8 @@
             }
             const apiKey = "AQ.Ab8RN6I-E0apfAtE88XNqD8lLYfnG8Lix-VVxJqsnCmxfTWIgg"; 
             const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`;
+
+            try {
                 const base64Image = await window.fileKeBase64(file);
                 const mimeType = file.type;
                 const requestBody = {
