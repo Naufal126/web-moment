@@ -251,14 +251,14 @@
         import { getFirestore, collection, addDoc, query, where, getDocs, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
-  apiKey: "AIzaSyAq0X59Cg4vtAibaloA8Ys8vGfIg-E79Z0",
-  authDomain: "web-moment.firebaseapp.com",
-  projectId: "web-moment",
-  storageBucket: "web-moment.firebasestorage.app",
-  messagingSenderId: "928375736608",
-  appId: "1:928375736608:web:961622651ec2a86fc0af45",
-  measurementId: "G-X5P9T5DZ5V"
-};
+          apiKey: "AIzaSyAq0X59Cg4vtAibaloA8Ys8vGfIg-E79Z0",
+          authDomain: "web-moment.firebaseapp.com",
+          projectId: "web-moment",
+          storageBucket: "web-moment.firebasestorage.app",
+          messagingSenderId: "928375736608",
+          appId: "1:928375736608:web:961622651ec2a86fc0af45",
+          measurementId: "G-X5P9T5DZ5V"
+        };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -330,25 +330,44 @@
             }
         });
 
+        // ==========================================
+        // KODE YANG DIPERBAIKI ADA DI SINI KE BAWAH
+        // ==========================================
         window.uploadHandler = () => {
             if(!currentUser) return window.showWarning("Login dulu!");
             const title = document.getElementById('inp-title').value;
             if(!title) return window.showWarning("ISI DULU FORM NYA!");
             const source = (uploadType==='file') ? document.getElementById('inp-file').files[0] : document.getElementById('inp-url').value;
             if(!source) return window.showWarning("Pilih file/link!");
+            
+            // Tampilkan bar loading dan pastikan mulai dari 0%
             document.getElementById('upload-container').style.display='block';
+            document.getElementById('progress-fill').style.width = '0%';
+            document.getElementById('status-text').innerText = `Proses: 0%`;
+
             const fd = new FormData();
             fd.append("file", source);
             fd.append("upload_preset", CONFIG.uploadPreset);
+            
             const xhr = new XMLHttpRequest();
             xhr.open("POST", `https://api.cloudinary.com/v1_1/${CONFIG.cloudName}/auto/upload`);
+            
             xhr.upload.onprogress = (e) => {
                 const p = Math.round((e.loaded / e.total)*100);
                 document.getElementById('progress-fill').style.width = p + '%';
                 document.getElementById('status-text').innerText = `Proses: ${p}%`;
             };
+            
             xhr.onload = async () => {
                 const d = JSON.parse(xhr.responseText);
+                
+                // Pengecekan error Cloudinary (Mencegah loading muter terus)
+                if (xhr.status !== 200) {
+                    window.showWarning("Gagal upload gambar: " + (d.error?.message || "Kesalahan pada pengaturan Cloudinary"));
+                    document.getElementById('upload-container').style.display = 'none'; // Sembunyikan loading
+                    return;
+                }
+
                 const fmtDate = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
                 try {
                     await addDoc(collection(db, "kenangan"), {
@@ -364,11 +383,22 @@
                     document.getElementById('modal-success').style.display='flex';
                     window.render();
                 } catch(e) {
-                    window.showWarning("Gagal simpan ke database cloud!");
+                    window.showWarning("Gagal simpan ke database Firebase!");
+                    document.getElementById('upload-container').style.display = 'none'; // Sembunyikan loading
                 }
             };
+
+            // Pengecekan error jaringan/internet terputus
+            xhr.onerror = () => {
+                window.showWarning("Terjadi kesalahan jaringan! Coba cek koneksi internetmu.");
+                document.getElementById('upload-container').style.display = 'none'; // Sembunyikan loading
+            };
+
             xhr.send(fd);
         };
+        // ==========================================
+        // BATAS KODE YANG DIPERBAIKI
+        // ==========================================
 
         window.render = async () => {
             if(!currentUser) return;
