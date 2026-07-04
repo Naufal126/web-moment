@@ -57,7 +57,6 @@
         }
         
         .login-card *, .login-card *::before, .login-card *::after { box-sizing: border-box; }
-        
         .login-card h2, .login-card p { color: white !important; }
         .login-card p { opacity: 0.8; }
         
@@ -84,9 +83,6 @@
         .auth-input:focus { background: rgba(255, 255, 255, 0.35); border-color: rgba(255, 255, 255, 0.7); }
         .auth-input.with-icon { padding-left: 42px !important; } 
         
-        .forgot-link { display: block; text-align: right; color: white; font-size: 0.75rem; text-decoration: none; opacity: 0.8; margin-top: -4px; margin-bottom: 18px; transition: 0.3s; }
-        .forgot-link:hover { opacity: 1; text-decoration: underline; }
-
         .btn-auth { width: 100%; padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 0.9rem; transition: 0.3s; }
         .btn-auth.primary { background: rgba(255,255,255,0.9); color: #333; border: none; margin-bottom: 10px; }
         .btn-auth.primary:hover { background: #fff; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
@@ -113,7 +109,8 @@
         .btn-icon { background: var(--primary); color: white; border: none; width: 35px; height: 35px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; } 
         .btn-text-action { background: var(--primary); color: white; border: none; padding: 0 15px; height: 35px; border-radius: 10px; font-size: 0.7rem; font-weight: bold; cursor: pointer; } 
         .moment-card { background: white; border-radius: 20px; overflow: hidden; margin-bottom: 25px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); position: relative; } 
-        .moment-card img, .moment-card video { width: 100%; display: block; max-height: 400px; object-fit: cover; cursor: pointer; } 
+        .moment-card img, .moment-card video { width: 100%; display: block; height: 280px; object-fit: cover; cursor: pointer; background: #000; } 
+        
         .moment-body { padding: 15px; } 
         .check-box { position: absolute; top: 12px; right: 12px; width: 22px; height: 22px; z-index: 100; cursor: pointer; display: none; accent-color: var(--primary); } 
         .select-active .check-box { display: block; } 
@@ -140,7 +137,6 @@
         .tab-btn { flex: 1; border: none; background: none; padding: 8px; font-size: 0.75rem; font-weight: bold; cursor: pointer; border-radius: 10px; color: #888; } 
         .tab-btn.active { background: white; color: var(--primary); }
 
-        /* Gaya Khusus Area Konten Hasil AI di dalam Modal */
         .ai-content-box { background: #f9f7f9; border: 1px dashed var(--primary); padding: 15px; border-radius: 15px; margin: 15px 0; text-align: left; font-size: 0.85rem; color: #444; line-height: 1.5; font-style: italic; white-space: pre-wrap; max-height: 180px; overflow-y: auto; }
     </style>
 </head>
@@ -178,7 +174,7 @@
             <div id="ai-popup-text" class="ai-content-box"></div>
             <button class="btn-modal" onclick="gunakanTeksAI()">GUNAKAN TEKS</button>
             <button id="btn-ai-retry" class="btn-modal" style="background: #e2dee3; color: #4a3f4b; margin-top: 8px;" onclick="mintaBantuanAI(true)">
-                <i class="fa-solid fa-arrows-rotate"></i> COBA LAGI (CARI AI LAI)
+                <i class="fa-solid fa-arrows-rotate"></i> COBA LAGI (CARI AI LAIN)
             </button>
             <button class="btn-modal" style="background: #eee; color: #333; margin-top: 8px;" onclick="closeModal('modal-ai-result')">BATAL</button>
         </div>
@@ -212,8 +208,6 @@
                     <input type="password" id="inp-password" class="auth-input with-icon" placeholder="Password...">
                 </div>
                 
-                <a href="#" onclick="mintaResetPassword(event)" class="forgot-link">Lupa password?</a>
-                
                 <button class="btn-auth primary" onclick="loginWithEmail()">Masuk</button>
                 <button class="btn-auth secondary" onclick="registerWithEmail()">Daftar Akun Baru</button>
                 
@@ -223,17 +217,6 @@
                     </button>
                 </div>
             </div>
-
-            <div id="reset-password-box" class="hidden">
-                <p style="font-size: 0.85rem; margin-bottom: 15px; color: #fff;">Ketik password baru kamu:</p>
-                <div class="input-group">
-                    <i class="fa-solid fa-key input-icon"></i>
-                    <input type="password" id="inp-new-password" class="auth-input with-icon" placeholder="Password baru...">
-                </div>
-                <button class="btn-action" id="btn-save-new-pass" style="margin-top: 0; padding: 12px; border-radius: 12px;">Simpan Password</button>
-            </div>
-            
-            <a href="https://www.naufal.fun" target="_blank" style="display: block; margin-top: 25px; font-size: 0.75rem; color: rgba(255,255,255,0.6); text-decoration: none;">Website developer</a> 
         </div>
     </div> 
     
@@ -315,7 +298,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, confirmPasswordReset } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, query, where, getDocs, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -331,7 +314,6 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        
         const provider = new GoogleAuthProvider();
         provider.setCustomParameters({ prompt: 'select_account' });
         
@@ -344,23 +326,19 @@
             document.getElementById('login-options').classList.add('hidden');
             document.getElementById('email-form-box').classList.remove('hidden');
         };
-
         window.showLoginOptions = () => {
             document.getElementById('email-form-box').classList.add('hidden');
             document.getElementById('login-options').classList.remove('hidden');
         };
-
         window.loginWithGoogle = () => {
             signInWithPopup(auth, provider).catch(err => window.showWarning("Gagal Login Google: " + err.message));
         };
-
         window.loginWithEmail = () => {
             const email = document.getElementById('inp-email').value;
             const pass = document.getElementById('inp-password').value;
             if(!email || !pass) return window.showWarning("Email dan Password harus diisi!");
             signInWithEmailAndPassword(auth, email, pass).catch(err => window.showWarning("Gagal Login!"));
         };
-
         window.registerWithEmail = () => {
             const email = document.getElementById('inp-email').value;
             const pass = document.getElementById('inp-password').value;
@@ -369,7 +347,6 @@
                 window.showWarning("Pendaftaran Berhasil! Silakan Login.");
             }).catch(err => window.showWarning("Gagal mendaftar."));
         };
-
         window.logoutApp = () => {
             signOut(auth).then(() => {
                 document.getElementById('app').style.display = 'none';
@@ -392,9 +369,6 @@
             }
         });
 
-        // ==========================================
-        // UPDATE FUNGSI AI CAPTION MAKER + RETRY
-        // ==========================================
         window.fileKeBase64 = (file) => {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -404,6 +378,7 @@
             });
         };
 
+        // KODE LOGIKA UTAMA UNTUK PROSES AI GENERATE
         window.mintaBantuanAI = async (isRetry = false) => {
             const fileInput = document.getElementById('inp-file');
             const loadingText = document.getElementById('ai-loading');
@@ -414,28 +389,21 @@
             if (uploadType !== 'file' || !fileInput.files.length) {
                 return window.showWarning("Pilih foto di tab FILE dulu ya sebelum minta tolong AI! 😉");
             }
-
             const file = fileInput.files[0];
             if (!file.type.startsWith('image/')) {
                 return window.showWarning("Saat ini AI hanya bisa membaca foto!");
             }
-
-            // Ubah tampilan loading text & matikan tombol retry sementara pas proses re-generate
             if(isRetry) {
                 retryBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Mencari Lain...`;
                 retryBtn.disabled = true;
             } else {
                 loadingText.classList.remove('hidden');
             }
-
             const apiKey = "AQ.Ab8RN6I-E0apfAtE88XNqD8lLYfnG8Lix-VVxJqsnCmxfTWIgg"; 
-            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`;
-
-
+            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
             try {
                 const base64Image = await window.fileKeBase64(file);
                 const mimeType = file.type;
-
                 const requestBody = {
                     contents: [{
                         parts: [
@@ -444,28 +412,21 @@
                         ]
                     }]
                 };
-
                 const respons = await fetch(endpoint, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(requestBody)
                 });
-
                 const data = await respons.json();
                 if (data.error) throw new Error(data.error.message);
-
                 const teksAI = data.candidates[0].content.parts[0].text;
                 aiPopupText.innerText = teksAI;
-                
-                // Munculkan popup jika dipanggil dari form utama
                 if(!isRetry) modalAI.style.display = 'flex';
-
             } catch (error) {
-                console.error(error);
                 window.showWarning("Gagal memuat caption dari AI.");
             } finally {
                 loadingText.classList.add('hidden');
-                retryBtn.innerHTML = `<i class="fa-solid fa-arrows-rotate"></i> COBA LAGI (CARI AI LAI)`;
+                retryBtn.innerHTML = `<i class="fa-solid fa-arrows-rotate"></i> COBA LAGI (CARI AI LAIN)`;
                 retryBtn.disabled = false;
             }
         };
@@ -475,49 +436,64 @@
             document.getElementById('inp-desc').value = teksAI;
             window.closeModal('modal-ai-result');
         };
-        // ==========================================
 
         window.uploadHandler = () => {
             if(!currentUser) return window.showWarning("Login dulu!");
             const title = document.getElementById('inp-title').value;
             if(!title) return window.showWarning("ISI DULU FORM NYA!");
-            const source = (uploadType==='file') ? document.getElementById('inp-file').files[0] : document.getElementById('inp-url').value;
-            if(!source) return window.showWarning("Pilih file/link!");
+            
+            let finalType = 'image';
+            let source = '';
+            
+            if (uploadType === 'file') {
+                source = document.getElementById('inp-file').files[0];
+                if(!source) return window.showWarning("Pilih file!");
+                finalType = source.type.startsWith('video/') ? 'video' : 'image';
+            } else {
+                source = document.getElementById('inp-url').value;
+                if(!source) return window.showWarning("Masukkan link url!");
+                if(/\.(mp4|webm|ogg|mov|avi|wmv)/i.test(source)) {
+                    finalType = 'video';
+                }
+            }
             
             document.getElementById('upload-container').style.display='block';
 
-            const fd = new FormData();
-            fd.append("file", source);
-            fd.append("upload_preset", CONFIG.uploadPreset);
-            
-            const xhr = new XMLHttpRequest();
-            xhr.open("POST", `https://api.cloudinary.com/v1_1/${CONFIG.cloudName}/auto/upload`);
-            
-            xhr.upload.onprogress = (e) => {
-                const p = Math.round((e.loaded / e.total)*100);
-                document.getElementById('progress-fill').style.width = p + '%';
-                document.getElementById('status-text').innerText = `Proses: ${p}%`;
-            };
-            
-            xhr.onload = async () => {
-                const d = JSON.parse(xhr.responseText);
+            const saveToFirebase = async (mediaUrl, mediaType) => {
                 const fmtDate = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-                
                 await addDoc(collection(db, "kenangan"), {
                     userId: currentUser.uid,
-                    type: d.resource_type,
-                    path: d.secure_url,
+                    type: mediaType,
+                    path: mediaUrl,
                     title: title,
                     desc: document.getElementById('inp-desc').value,
                     date: fmtDate,
                     status: 'utama',
                     timestamp: Date.now()
                 });
-                
                 document.getElementById('modal-success').style.display='flex';
                 window.render();
             };
-            xhr.send(fd);
+
+            if (uploadType === 'file') {
+                const fd = new FormData();
+                fd.append("file", source);
+                fd.append("upload_preset", CONFIG.uploadPreset);
+                const xhr = new XMLHttpRequest();
+                xhr.open("POST", `https://api.cloudinary.com/v1_1/${CONFIG.cloudName}/auto/upload`);
+                xhr.upload.onprogress = (e) => {
+                    const p = Math.round((e.loaded / e.total)*100);
+                    document.getElementById('progress-fill').style.width = p + '%';
+                    document.getElementById('status-text').innerText = `Proses: ${p}%`;
+                };
+                xhr.onload = async () => {
+                    const d = JSON.parse(xhr.responseText);
+                    await saveToFirebase(d.secure_url, d.resource_type);
+                };
+                xhr.send(fd);
+            } else {
+                saveToFirebase(source, finalType);
+            }
         };
 
         window.render = async () => {
@@ -533,7 +509,7 @@
             box.innerHTML = dbData.map(m => `
                 <div class="moment-card">
                     <input type="checkbox" class="check-box" value="${m.id}">
-                    ${m.type === 'video' ? `<video src="${m.path}" onclick="openPreview('${m.path}', 'video')"></video>` : `<img src="${m.path}" onclick="openPreview('${m.path}', 'image')">`}
+                    ${m.type === 'video' ? `<video src="${m.path}" preload="metadata" onclick="openPreview('${m.path}', 'video')"></video>` : `<img src="${m.path}" onclick="openPreview('${m.path}', 'image')">`}
                     <div class="moment-body">
                         <small style="color:#aaa; font-weight:bold;">${m.date}</small>
                         <div style="font-weight:bold; margin-top:2px;">${m.title}</div>
@@ -607,6 +583,7 @@
             document.getElementById('inp-title').value = '';
             document.getElementById('inp-desc').value = '';
             document.getElementById('inp-file').value = '';
+            document.getElementById('inp-url').value = '';
         };
 
         window.initGPS = async () => {
@@ -639,4 +616,4 @@
         setInterval(() => document.getElementById('clock-widget').innerText = new Date().toLocaleTimeString('id-ID'), 1000);
     </script>
 </body>
-                                                                                                                                                                                                                                                                    </html>
+</html>
