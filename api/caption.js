@@ -1,12 +1,13 @@
 export default async function handler(req, res) {
-    // Hanya izinkan metode POST
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method tidak diizinkan' });
     }
 
     const { mimeType, base64Image } = req.body;
     
-    // Mengambil API Key dari Environment Variable Vercel (Aman!)
+    // INI KUNCI FIX-NYA: Membersihkan embel-embel "data:image/jpeg;base64,"
+    const pureBase64 = base64Image.includes('base64,') ? base64Image.split('base64,')[1] : base64Image;
+
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
@@ -23,7 +24,7 @@ export default async function handler(req, res) {
                 contents: [{
                     parts: [
                         { text: "Berikan HANYA SATU kalimat caption pendek yang sangat estetik, puitis, atau lucu dalam bahasa Indonesia untuk foto ini. JANGAN berikan pilihan, JANGAN pakai hashtag, dan JANGAN ada kata pembuka. LANGSUNG tulis caption-nya saja!" },
-                        { inlineData: { mimeType: mimeType, data: base64Image } }
+                        { inlineData: { mimeType: mimeType, data: pureBase64 } } // <-- Pakai teks yang sudah bersih
                     ]
                 }]
             })
