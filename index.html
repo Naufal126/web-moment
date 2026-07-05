@@ -246,7 +246,18 @@
                         <div id="status-text" style="font-size:0.75rem; font-weight:bold;">Proses: 0%</div> 
                         <div class="progress-wrapper"><div id="progress-fill"></div></div> 
                     </div> 
-                </div> 
+
+                    <div id="chat-container" style="margin-top: 25px; border: 1px dashed var(--primary); padding: 15px; border-radius: 15px; background: #fafafa;">
+                        <h4 style="margin-top: 0; color: var(--primary);">💬 Roasting AI</h4>
+                        <div id="chat-box" style="height: 180px; overflow-y: auto; background: white; padding: 10px; margin-bottom: 10px; border-radius: 10px; font-size: 14px; border: 1px solid #eee;">
+                            <em>Kirim chat buat ngetes seberapa julid AI ini ke foto di atas...</em>
+                        </div>
+                        <div style="display: flex; gap: 5px;">
+                            <input type="text" id="chat-input" placeholder="Tanya sesuatu ttg foto ini..." style="flex: 1; padding: 10px; border-radius: 10px; border: 1px solid #ccc; font-size: 0.8rem; outline: none;">
+                            <button onclick="kirimChat()" style="padding: 10px 15px; background: var(--primary); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold;"><i class="fa-solid fa-paper-plane"></i></button>
+                        </div>
+                    </div>
+                    </div> 
             </div> 
             
             <div id="view-gallery" class="hidden"> 
@@ -378,63 +389,118 @@
             });
         };
 
-        // KODE LOGIKA UTAMA UNTUK PROSES AI GENERATE
         window.mintaBantuanAI = async (isRetry = false) => {
-    const fileInput = document.getElementById('inp-file');
-    const loadingText = document.getElementById('ai-loading');
-    const aiPopupText = document.getElementById('ai-popup-text');
-    const modalAI = document.getElementById('modal-ai-result');
-    const retryBtn = document.getElementById('btn-ai-retry');
-    
-    if (uploadType !== 'file' || !fileInput.files.length) {
-        return window.showWarning("Pilih foto di tab FILE dulu ya sebelum minta tolong AI! 😉");
-    }
-    const file = fileInput.files[0];
-    if (!file.type.startsWith('image/')) {
-        return window.showWarning("Saat ini AI hanya bisa membaca foto!");
-    }
-    if(isRetry) {
-        retryBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Mencari Lain...`;
-        retryBtn.disabled = true;
-    } else {
-        loadingText.classList.remove('hidden');
-    }
-    
-    try {
-        const base64Image = await window.fileKeBase64(file);
-        const mimeType = file.type;
-        
-        // Memanggil Serverless Function di Vercel (Aman & Rahasia)
-        const respons = await fetch('/api/caption', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ mimeType, base64Image })
-        });
-        
-        const data = await respons.json();
-        
-        if (!respons.ok || data.error) {
-            throw new Error(data.error || "Terjadi kesalahan pada server.");
-        }
-        
-        aiPopupText.innerText = data.caption;
-        if(!isRetry) modalAI.style.display = 'flex';
-        
-    } catch (error) {
-        window.showWarning("Gagal memuat caption dari AI. Coba lah lagi nanti");
-    } finally {
-        loadingText.classList.add('hidden');
-        retryBtn.innerHTML = `<i class="fa-solid fa-arrows-rotate"></i> COBA LAGI (CARI AI LAIN)`;
-        retryBtn.disabled = false;
-    }
-};//
-
+            const fileInput = document.getElementById('inp-file');
+            const loadingText = document.getElementById('ai-loading');
+            const aiPopupText = document.getElementById('ai-popup-text');
+            const modalAI = document.getElementById('modal-ai-result');
+            const retryBtn = document.getElementById('btn-ai-retry');
+            
+            if (uploadType !== 'file' || !fileInput.files.length) {
+                return window.showWarning("Pilih foto di tab FILE dulu ya sebelum minta tolong AI! 😉");
+            }
+            const file = fileInput.files[0];
+            if (!file.type.startsWith('image/')) {
+                return window.showWarning("Saat ini AI hanya bisa membaca foto!");
+            }
+            if(isRetry) {
+                retryBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Mencari Lain...`;
+                retryBtn.disabled = true;
+            } else {
+                loadingText.classList.remove('hidden');
+            }
+            
+            try {
+                const base64Image = await window.fileKeBase64(file);
+                const mimeType = file.type;
+                
+                const respons = await fetch('/api/caption', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ mimeType, base64Image })
+                });
+                
+                const data = await respons.json();
+                
+                if (!respons.ok || data.error) {
+                    throw new Error(data.error || "Terjadi kesalahan pada server.");
+                }
+                
+                aiPopupText.innerText = data.caption;
+                if(!isRetry) modalAI.style.display = 'flex';
+                
+            } catch (error) {
+                window.showWarning("Gagal memuat caption dari AI. Coba lah lagi nanti");
+            } finally {
+                loadingText.classList.add('hidden');
+                retryBtn.innerHTML = `<i class="fa-solid fa-arrows-rotate"></i> COBA LAGI (CARI AI LAIN)`;
+                retryBtn.disabled = false;
+            }
+        };
 
         window.gunakanTeksAI = () => {
             const teksAI = document.getElementById('ai-popup-text').innerText;
             document.getElementById('inp-desc').value = teksAI;
             window.closeModal('modal-ai-result');
         };
+
+        // ==========================================
+        // FUNGSI CHAT AI JULID
+        // ==========================================
+        window.kirimChat = async () => {
+            const input = document.getElementById('chat-input');
+            const chatBox = document.getElementById('chat-box');
+            const pesan = input.value;
+            
+            if (!pesan) return;
+
+            // Tampilkan chat user (desain bubble chat)
+            chatBox.innerHTML += `<div style="margin: 8px 0; text-align: right;"><span style="background: var(--primary); color: white; padding: 6px 12px; border-radius: 15px 15px 0 15px; display: inline-block; font-size: 0.8rem;">${pesan}</span></div>`;
+            input.value = '';
+            
+            // Loading state
+            const idLoading = "loading-" + Date.now();
+            chatBox.innerHTML += `<div id="${idLoading}" style="margin: 8px 0; text-align: left;"><span style="background: #eee; color: #555; padding: 6px 12px; border-radius: 15px 15px 15px 0; display: inline-block; font-size: 0.8rem; font-style: italic;">AI lagi ngetik...</span></div>`;
+            chatBox.scrollTop = chatBox.scrollHeight; 
+
+            try {
+                let fotoBase64 = "";
+                let mimeType = "image/jpeg";
+                const fileInput = document.getElementById('inp-file');
+                
+                // Ambil foto yang sedang dipilih (kalau ada)
+                if (uploadType === 'file' && fileInput.files.length > 0) {
+                    const file = fileInput.files[0];
+                    if (file.type.startsWith('image/')) {
+                        fotoBase64 = await window.fileKeBase64(file);
+                        mimeType = file.type;
+                    }
+                }
+
+                const bodyData = { pesan, base64Image: fotoBase64, mimeType };
+
+                const respons = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(bodyData)
+                });
+
+                const data = await respons.json();
+                if(document.getElementById(idLoading)) document.getElementById(idLoading).remove();
+
+                if (data.error) {
+                    chatBox.innerHTML += `<div style="margin: 8px 0; text-align: left;"><span style="background: #ffebee; color: red; padding: 6px 12px; border-radius: 15px 15px 15px 0; display: inline-block; font-size: 0.8rem;"><strong>Error:</strong> ${data.error}</span></div>`;
+                } else {
+                    chatBox.innerHTML += `<div style="margin: 8px 0; text-align: left;"><span style="background: #fdfaf6; border: 1px solid var(--primary); color: #333; padding: 6px 12px; border-radius: 15px 15px 15px 0; display: inline-block; font-size: 0.8rem; line-height: 1.4;">🤖 <strong>Bot Julid:</strong><br>${data.balasan}</span></div>`;
+                }
+                
+            } catch (error) {
+                if(document.getElementById(idLoading)) document.getElementById(idLoading).remove();
+                chatBox.innerHTML += `<div style="margin: 8px 0; text-align: left;"><span style="background: #ffebee; color: red; padding: 6px 12px; border-radius: 15px 15px 15px 0; display: inline-block; font-size: 0.8rem;">Gagal nyambung ke server!</span></div>`;
+            }
+            chatBox.scrollTop = chatBox.scrollHeight;
+        };
+        // ==========================================
 
         window.uploadHandler = () => {
             if(!currentUser) return window.showWarning("Login dulu!");
