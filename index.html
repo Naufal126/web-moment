@@ -380,57 +380,55 @@
 
         // KODE LOGIKA UTAMA UNTUK PROSES AI GENERATE
         window.mintaBantuanAI = async (isRetry = false) => {
-            const fileInput = document.getElementById('inp-file');
-            const loadingText = document.getElementById('ai-loading');
-            const aiPopupText = document.getElementById('ai-popup-text');
-            const modalAI = document.getElementById('modal-ai-result');
-            const retryBtn = document.getElementById('btn-ai-retry');
-            
-            if (uploadType !== 'file' || !fileInput.files.length) {
-                return window.showWarning("Pilih foto di tab FILE dulu ya sebelum minta tolong AI! 😉");
-            }
-            const file = fileInput.files[0];
-            if (!file.type.startsWith('image/')) {
-                return window.showWarning("Saat ini AI hanya bisa membaca foto!");
-            }
-            if(isRetry) {
-                retryBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Mencari Lain...`;
-                retryBtn.disabled = true;
-            } else {
-                loadingText.classList.remove('hidden');
-            }
-            const apiKey = "AQ.Ab8RN6I-E0apfAtE88XNqD8lLYfnG8Lix-VVxJqsnCmxfTWIgg"; 
-            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`;
+    const fileInput = document.getElementById('inp-file');
+    const loadingText = document.getElementById('ai-loading');
+    const aiPopupText = document.getElementById('ai-popup-text');
+    const modalAI = document.getElementById('modal-ai-result');
+    const retryBtn = document.getElementById('btn-ai-retry');
+    
+    if (uploadType !== 'file' || !fileInput.files.length) {
+        return window.showWarning("Pilih foto di tab FILE dulu ya sebelum minta tolong AI! 😉");
+    }
+    const file = fileInput.files[0];
+    if (!file.type.startsWith('image/')) {
+        return window.showWarning("Saat ini AI hanya bisa membaca foto!");
+    }
+    if(isRetry) {
+        retryBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Mencari Lain...`;
+        retryBtn.disabled = true;
+    } else {
+        loadingText.classList.remove('hidden');
+    }
+    
+    try {
+        const base64Image = await window.fileKeBase64(file);
+        const mimeType = file.type;
+        
+        // Memanggil Serverless Function di Vercel (Aman & Rahasia)
+        const respons = await fetch('/api/caption', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mimeType, base64Image })
+        });
+        
+        const data = await respons.json();
+        
+        if (!respons.ok || data.error) {
+            throw new Error(data.error || "Terjadi kesalahan pada server.");
+        }
+        
+        aiPopupText.innerText = data.caption;
+        if(!isRetry) modalAI.style.display = 'flex';
+        
+    } catch (error) {
+        window.showWarning("Gagal memuat caption dari AI. Coba lah lagi nanti");
+    } finally {
+        loadingText.classList.add('hidden');
+        retryBtn.innerHTML = `<i class="fa-solid fa-arrows-rotate"></i> COBA LAGI (CARI AI LAIN)`;
+        retryBtn.disabled = false;
+    }
+};//
 
-            try {
-                const base64Image = await window.fileKeBase64(file);
-                const mimeType = file.type;
-                const requestBody = {
-                    contents: [{
-                        parts: [
-                            { text: "Buatkan caption singkat yang estetik, puitis, atau lucu dalam bahasa Indonesia untuk foto ini. Jangan pakai hashtag. Tulis langsung hasilnya saja tanpa kalimat pembuka seperti 'Berikut adalah...'." },
-                            { inlineData: { mimeType: mimeType, data: base64Image } }
-                        ]
-                    }]
-                };
-                const respons = await fetch(endpoint, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(requestBody)
-                });
-                const data = await respons.json();
-                if (data.error) throw new Error(data.error.message);
-                const teksAI = data.candidates[0].content.parts[0].text;
-                aiPopupText.innerText = teksAI;
-                if(!isRetry) modalAI.style.display = 'flex';
-            } catch (error) {
-                window.showWarning("Gagal memuat caption dari AI.");
-            } finally {
-                loadingText.classList.add('hidden');
-                retryBtn.innerHTML = `<i class="fa-solid fa-arrows-rotate"></i> COBA LAGI (CARI AI LAIN)`;
-                retryBtn.disabled = false;
-            }
-        };
 
         window.gunakanTeksAI = () => {
             const teksAI = document.getElementById('ai-popup-text').innerText;
