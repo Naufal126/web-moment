@@ -9,7 +9,7 @@ export default async function handler(req, res) {
 
     if (!apiKey) return res.status(500).json({ error: 'API Key belum diset!' });
 
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
+    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`;
 
     // INI DIA OTAK KARAKTERNYA: Kamu bisa ganti kata-katanya kalau mau lebih/kurang julid!
     const instruksiKarakter = "Kamu adalah teman nongkrong yang super julid, sarkas, blak-blakan, tapi asik dan lucu. Gunakan bahasa gaul Jakarta (lo/gue). Tugasmu adalah membalas chat pengunjung yang sedang melihat sebuah foto. Roasting fotonya atau balas pertanyaannya dengan pedas tapi bikin ngakak. Jangan panjang-panjang, maksimal 2-3 kalimat aja.";
