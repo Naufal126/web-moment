@@ -138,6 +138,10 @@
         .tab-btn.active { background: white; color: var(--primary); }
 
         .ai-content-box { background: #f9f7f9; border: 1px dashed var(--primary); padding: 15px; border-radius: 15px; margin: 15px 0; text-align: left; font-size: 0.85rem; color: #444; line-height: 1.5; font-style: italic; white-space: pre-wrap; max-height: 180px; overflow-y: auto; }
+
+        /* Floating Chat Button (Pojok Kanan Bawah) */
+        .fab-chat-ai { position: fixed; bottom: 85px; right: 20px; background: var(--primary); color: white; width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 4500; cursor: pointer; transition: 0.3s; font-size: 1.3rem; }
+        .fab-chat-ai:hover { transform: scale(1.1); background: var(--accent); }
     </style>
 </head>
 <body>
@@ -179,7 +183,22 @@
             <button class="btn-modal" style="background: #eee; color: #333; margin-top: 8px;" onclick="closeModal('modal-ai-result')">BATAL</button>
         </div>
     </div>
-    
+
+    <div id="modal-chat-ai" class="modal-overlay">
+        <div class="modal-content" style="max-width: 380px; padding: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 style="margin: 0; color: var(--primary);">💬 Roasting AI Chat</h3>
+                <span onclick="closeModal('modal-chat-ai')" style="cursor: pointer; font-size: 1.2rem; color: #aaa;"><i class="fa-solid fa-xmark"></i></span>
+            </div>
+            <div id="chat-box" style="height: 250px; overflow-y: auto; background: #f9f9f9; padding: 12px; margin-bottom: 12px; border-radius: 15px; font-size: 14px; border: 1px solid #eee; text-align: left;">
+                <em style="color: #999;">Pilih foto di tab TAMBAH dulu, lalu kirim pesan untuk mulai roasting...</em>
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <input type="text" id="chat-input" placeholder="Tanya sesuatu ttg foto..." style="flex: 1; padding: 12px; border-radius: 12px; border: 1px solid #ddd; font-size: 0.85rem; margin: 0 !important; outline: none;">
+                <button onclick="kirimChat()" style="padding: 0 15px; background: var(--primary); color: white; border: none; border-radius: 12px; cursor: pointer;"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
     <div id="landing"> 
         <div class="login-card">
             <h2 style="margin-top: 0; margin-bottom: 5px;">Penyimpanan Kenangan</h2> 
@@ -221,6 +240,8 @@
     </div> 
     
     <div id="app"> 
+        <div class="fab-chat-ai" onclick="document.getElementById('modal-chat-ai').style.display='flex'"><i class="fa-solid fa-comments"></i></div>
+
         <div class="container"> 
             <div id="view-add"> 
                 <h2 style="text-align: center;">Tambah Kenangan</h2> 
@@ -246,18 +267,7 @@
                         <div id="status-text" style="font-size:0.75rem; font-weight:bold;">Proses: 0%</div> 
                         <div class="progress-wrapper"><div id="progress-fill"></div></div> 
                     </div> 
-
-                    <div id="chat-container" style="margin-top: 25px; border: 1px dashed var(--primary); padding: 15px; border-radius: 15px; background: #fafafa;">
-                        <h4 style="margin-top: 0; color: var(--primary);">💬 Roasting AI</h4>
-                        <div id="chat-box" style="height: 180px; overflow-y: auto; background: white; padding: 10px; margin-bottom: 10px; border-radius: 10px; font-size: 14px; border: 1px solid #eee;">
-                            <em>Kirim chat buat ngetes seberapa julid AI ini ke foto di atas...</em>
-                        </div>
-                        <div style="display: flex; gap: 5px;">
-                            <input type="text" id="chat-input" placeholder="Tanya sesuatu ttg foto ini..." style="flex: 1; padding: 10px; border-radius: 10px; border: 1px solid #ccc; font-size: 0.8rem; outline: none;">
-                            <button onclick="kirimChat()" style="padding: 10px 15px; background: var(--primary); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold;"><i class="fa-solid fa-paper-plane"></i></button>
-                        </div>
-                    </div>
-                    </div> 
+                </div> 
             </div> 
             
             <div id="view-gallery" class="hidden"> 
@@ -445,7 +455,7 @@
         };
 
         // ==========================================
-        // FUNGSI CHAT AI JULID
+        // FUNGSI CHAT AI JULID (MODAL/POPUP VERSION)
         // ==========================================
         window.kirimChat = async () => {
             const input = document.getElementById('chat-input');
@@ -454,11 +464,9 @@
             
             if (!pesan) return;
 
-            // Tampilkan chat user (desain bubble chat)
             chatBox.innerHTML += `<div style="margin: 8px 0; text-align: right;"><span style="background: var(--primary); color: white; padding: 6px 12px; border-radius: 15px 15px 0 15px; display: inline-block; font-size: 0.8rem;">${pesan}</span></div>`;
             input.value = '';
             
-            // Loading state
             const idLoading = "loading-" + Date.now();
             chatBox.innerHTML += `<div id="${idLoading}" style="margin: 8px 0; text-align: left;"><span style="background: #eee; color: #555; padding: 6px 12px; border-radius: 15px 15px 15px 0; display: inline-block; font-size: 0.8rem; font-style: italic;">AI lagi ngetik...</span></div>`;
             chatBox.scrollTop = chatBox.scrollHeight; 
@@ -468,7 +476,6 @@
                 let mimeType = "image/jpeg";
                 const fileInput = document.getElementById('inp-file');
                 
-                // Ambil foto yang sedang dipilih (kalau ada)
                 if (uploadType === 'file' && fileInput.files.length > 0) {
                     const file = fileInput.files[0];
                     if (file.type.startsWith('image/')) {
